@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.bawnorton.betterbookshelves.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ChiseledBookshelfEntityMixin",
+    "ChiseledBookshelfMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
