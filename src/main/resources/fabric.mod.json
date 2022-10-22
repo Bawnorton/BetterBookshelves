@@ -14,10 +14,13 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/betterbookshelves/icon.png",
 
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "com.bawnorton.betterbookshelves.client.BetterBookshelvesClient"
+    ],
     "main": [
       "com.bawnorton.betterbookshelves.BetterBookshelves"
     ]
@@ -28,6 +31,7 @@
 
   "depends": {
     "fabricloader": ">=0.14.9",
+    "fabric": "*",
     "minecraft": "~1.19",
     "java": ">=17"
   },

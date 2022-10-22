@@ -1,4 +1,4 @@
-package com.bawnorton.betterbookshelves;
+package com.bawnorton.betterbookshelves.util;
 
 public enum Book {
     TOP_LEFT(0, 4, 15, 8),

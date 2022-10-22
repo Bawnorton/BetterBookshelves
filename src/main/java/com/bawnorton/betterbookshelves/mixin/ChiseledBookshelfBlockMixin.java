@@ -1,7 +1,7 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.Book;
+import com.bawnorton.betterbookshelves.util.Book;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChiseledBookshelfBlock;
@@ -31,10 +31,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
 
 @Mixin(ChiseledBookshelfBlock.class)
-public class ChiseledBookshelfMixin {
-
+public class ChiseledBookshelfBlockMixin {
     @Shadow @Final public static IntProperty BOOKS_STORED;
-
     @Shadow @Final public static IntProperty LAST_INTERACTION_BOOK_SLOT;
 
     @ModifyArg(method = "<init>", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/BlockWithEntity;<init>(Lnet/minecraft/block/AbstractBlock$Settings;)V"))

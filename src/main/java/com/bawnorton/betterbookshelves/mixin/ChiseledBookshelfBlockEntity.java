@@ -1,9 +1,7 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import com.bawnorton.betterbookshelves.util.IChiseledBookshelfBlockEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -17,19 +15,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Hashtable;
 
-import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
-
-@Mixin(ChiseledBookshelfBlockEntity.class)
-public class ChiseledBookshelfEntityMixin {
-    private static final Hashtable<ChiseledBookshelfBlockEntity, DefaultedList<ItemStack>> bookWrapper = new Hashtable<>();
+@Mixin(net.minecraft.block.entity.ChiseledBookshelfBlockEntity.class)
+public class ChiseledBookshelfBlockEntity implements IChiseledBookshelfBlockEntity {
+    private static final Hashtable<net.minecraft.block.entity.ChiseledBookshelfBlockEntity, DefaultedList<ItemStack>> bookWrapper = new Hashtable<>();
 
     private DefaultedList<ItemStack> getBookList() {
-        DefaultedList<ItemStack> defaultedList = bookWrapper.get(((ChiseledBookshelfBlockEntity)(Object)this));
+        DefaultedList<ItemStack> defaultedList = bookWrapper.get(((net.minecraft.block.entity.ChiseledBookshelfBlockEntity)(Object)this));
         if (defaultedList == null) {
             defaultedList = DefaultedList.ofSize(6, ItemStack.EMPTY);
-            bookWrapper.put(((ChiseledBookshelfBlockEntity)(Object)this), defaultedList);
+            bookWrapper.put(((net.minecraft.block.entity.ChiseledBookshelfBlockEntity)(Object)this), defaultedList);
         }
         return defaultedList;
+    }
+
+    public int getBookString() {
+        // return a string of 0s and 1s representing the books in the bookshelf and then convert to an int
+        StringBuilder bookString = new StringBuilder();
+        for (ItemStack book : getBookList()) {
+            bookString.append(book == ItemStack.EMPTY ? "0" : "1");
+        }
+        bookString.reverse();
+        return Integer.parseInt(bookString.toString(), 2);
     }
 
     @Inject(method = "getLastBook", at=@At("HEAD"), cancellable = true)
@@ -93,11 +99,11 @@ public class ChiseledBookshelfEntityMixin {
 
     @Inject(method = "isFull", at=@At("HEAD"), cancellable = true)
     public void isFull(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(((ChiseledBookshelfBlockEntity)(Object)(this)).getBookCount() == 6);
+        cir.setReturnValue(((net.minecraft.block.entity.ChiseledBookshelfBlockEntity)(Object)(this)).getBookCount() == 6);
     }
 
     @Inject(method = "isEmpty", at=@At("HEAD"), cancellable = true)
     public void isEmpty(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(((ChiseledBookshelfBlockEntity)(Object)(this)).getBookCount() == 0);
+        cir.setReturnValue(((net.minecraft.block.entity.ChiseledBookshelfBlockEntity)(Object)(this)).getBookCount() == 0);
     }
 }
