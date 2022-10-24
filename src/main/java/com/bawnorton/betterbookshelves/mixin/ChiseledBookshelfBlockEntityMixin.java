@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
-public abstract class ChiseledBookshelfBlockEntityMixinAccess implements ChiseledBookshelfBlockEntityAccess {
+public abstract class ChiseledBookshelfBlockEntityMixin implements ChiseledBookshelfBlockEntityAccess {
 
     private List<ItemStack> books;
 

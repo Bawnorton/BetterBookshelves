@@ -4,7 +4,7 @@
   "package": "com.bawnorton.betterbookshelves.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChiseledBookshelfBlockEntityMixinAccess",
+    "ChiseledBookshelfBlockEntityMixin",
     "ChiseledBookshelfBlockMixin",
     "EnchantingTableBlockMixin"
   ],
