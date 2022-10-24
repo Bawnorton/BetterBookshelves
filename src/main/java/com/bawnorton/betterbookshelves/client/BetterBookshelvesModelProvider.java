@@ -1,7 +1,6 @@
-package com.bawnorton.betterbookshelves.render;
+package com.bawnorton.betterbookshelves.client;
 
 import net.fabricmc.fabric.api.client.model.ModelProviderContext;
-import net.fabricmc.fabric.api.client.model.ModelProviderException;
 import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
 import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.util.Identifier;

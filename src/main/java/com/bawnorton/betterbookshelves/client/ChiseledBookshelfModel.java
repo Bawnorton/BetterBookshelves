@@ -1,7 +1,6 @@
-package com.bawnorton.betterbookshelves.render;
+package com.bawnorton.betterbookshelves.client;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.util.IChiseledBookshelfBlockEntity;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
@@ -25,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.state.property.Properties;
@@ -153,7 +151,6 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         List<ItemStack> items = BetterBookshelves.bookshelves.get(pos);
         String base5String = String.format("%6s", toBase5Representation(items)).replace(' ', '0');
-        LOGGER.info("Books: " + base5String);
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
@@ -240,7 +237,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                 }
             }
         }
-        // example tag: {BlockEntityTag:{Items:[{Count:1b,Slot:0b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:protection",lvl:1s}]}},{Count:1b,Slot:4b,id:"minecraft:writable_book"}],id:"minecraft:chiseled_bookshelf"},display:{Lore:['"(+NBT)"']}}
+
         if(tag != null && tag.contains("BlockEntityTag")) {
             NbtCompound blockEntityTag = tag.getCompound("BlockEntityTag");
             if(blockEntityTag.contains("Items")) {
@@ -249,15 +246,22 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                     String nbtString = item.asString();
                     int slot = 5 - Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
                     String type = nbtString.substring(nbtString.indexOf("id:") + 4, nbtString.indexOf("\"", nbtString.indexOf("id:") + 4));
-                    if(type.equals("minecraft:enchanted_book")) {
-                        type = "enchanted";
-                    } else if(type.equals("minecraft:book")) {
-                        type = "normal";
-                    } else if(type.equals("minecraft:written_book")) {
-                        type = "signed";
-                    } else if(type.equals("minecraft:writable_book")) {
-                        type = "written";
-                    } else continue;
+                    switch (type) {
+                        case "minecraft:enchanted_book":
+                            type = "enchanted";
+                            break;
+                        case "minecraft:book":
+                            type = "normal";
+                            break;
+                        case "minecraft:written_book":
+                            type = "signed";
+                            break;
+                        case "minecraft:writable_book":
+                            type = "written";
+                            break;
+                        default:
+                            continue;
+                    }
                     emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
                     emitter.spriteBake(0, SPRITES.get(type + "_book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
                     emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());

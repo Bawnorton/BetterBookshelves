@@ -1,6 +1,5 @@
 package com.bawnorton.betterbookshelves.client;
 
-import com.bawnorton.betterbookshelves.render.BetterBookshelvesModelProvider;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 
