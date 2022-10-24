@@ -1,5 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
+import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.util.IChiseledBookshelfBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
@@ -19,51 +20,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
-public class ChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBlockEntity {
+public abstract class ChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBlockEntity {
 
     private List<ItemStack> books;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(BlockPos pos, BlockState state, CallbackInfo ci) {
-        books = new ArrayList<>() {{
-            for(int i = 0; i < 6; i++) add(ItemStack.EMPTY);
-        }};
+        books = new ArrayList<>();
+        for(int i = 0; i < 6; i++) books.add(ItemStack.EMPTY);
+        update();
     }
 
     private ChiseledBookshelfBlockEntity ths() {
         return (ChiseledBookshelfBlockEntity) (Object) this;
     }
 
-    @Override
-    public ItemStack getBook(int index) {
-        return books.set(index, ItemStack.EMPTY);
+    public void update() {
+        BetterBookshelves.bookshelves.put(ths().getPos(), books);
     }
 
     @Override
-    public void setBook(int index, ItemStack stack) {
-        if(index < 0 || index > 5 || stack == ItemStack.EMPTY) return;
+    public ItemStack getBook(int index) {
+        ItemStack result = books.set(index, ItemStack.EMPTY);
+        update();
+        return result;
+    }
+
+    @Override
+    public boolean setBook(int index, ItemStack stack) {
+        if(index < 0 || index > 5 || stack == ItemStack.EMPTY) return false;
         if(stack.isIn(ItemTags.BOOKSHELF_BOOKS)) {
             if(books.get(index) == ItemStack.EMPTY) {
                 books.set(index, stack);
+                update();
+                return true;
             }
         }
+        return false;
     }
 
     public List<ItemStack> getBooks() {
         return books;
-    }
-
-    @Override
-    public int getBinaryRepresentation() {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < 6; i++) {
-            if(books.get(i) != ItemStack.EMPTY) {
-                sb.append("1");
-            } else {
-                sb.append("0");
-            }
-        }
-        return Integer.parseInt(sb.reverse().toString(), 2);
     }
 
     @Inject(method = "getLastBook", at=@At("HEAD"))
@@ -80,7 +77,9 @@ public class ChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBloc
     private void readNbt(NbtCompound nbt, CallbackInfo ci) {
         DefaultedList<ItemStack> bookList = DefaultedList.ofSize(6, ItemStack.EMPTY);
         Inventories.readNbt(nbt, bookList);
+        books.clear();
         books.addAll(bookList);
+        update();
         ci.cancel();
     }
 
@@ -88,8 +87,8 @@ public class ChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBloc
     private void writeNbt(NbtCompound nbt, CallbackInfo ci) {
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(6);
         defaultedList.addAll(books);
-
         Inventories.writeNbt(nbt, defaultedList, true);
+        update();
         ci.cancel();
     }
 
@@ -98,8 +97,8 @@ public class ChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBloc
         NbtCompound nbt = new NbtCompound();
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(6);
         defaultedList.addAll(books);
-
         Inventories.writeNbt(nbt, defaultedList, true);
+        update();
         cir.setReturnValue(nbt);
     }
 

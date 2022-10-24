@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IChiseledBookshelfBlockEntity {
     ItemStack getBook(int index);
-    void setBook(int index, ItemStack stack);
+    boolean setBook(int index, ItemStack stack);
     List<ItemStack> getBooks();
-    int getBinaryRepresentation();
+    void update();
 }

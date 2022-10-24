@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "minecraft:block/template_chiseled_bookshelf"
+      "model": "minecraft:block/chiseled_bookshelf"
     }
   }
 }
