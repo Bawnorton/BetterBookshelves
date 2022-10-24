@@ -71,7 +71,6 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
             int index = getLookingAtIndex(player, blockEntity);
             if(index == -1) return ActionResult.PASS;
             boolean sucess = ((IChiseledBookshelfBlockEntity) blockEntity).setBook(index, stack.split(1));
-            BetterBookshelves.LOGGER.info("Sucess: " + sucess);
             if(!sucess) {
                 stack.increment(1);
                 return ActionResult.PASS;

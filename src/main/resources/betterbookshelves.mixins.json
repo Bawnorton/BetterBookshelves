@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ChiseledBookshelfBlockEntityMixin",
-    "ChiseledBookshelfBlockMixin"
+    "ChiseledBookshelfBlockMixin",
+    "EnchantingTableBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
