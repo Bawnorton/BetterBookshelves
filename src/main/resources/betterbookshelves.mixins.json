@@ -4,13 +4,12 @@
   "package": "com.bawnorton.betterbookshelves.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChiseledBookshelfBlockEntity",
+    "ChiseledBookshelfBlockEntityMixin",
     "ChiseledBookshelfBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "JsonUnbakedModelMixin"
   ]
 }

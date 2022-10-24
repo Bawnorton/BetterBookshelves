@@ -7,14 +7,10 @@ import org.slf4j.LoggerFactory;
 
 public class BetterBookshelves implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("betterbookshelves");
-	public static final String MODID = "minecraft";
-	public static int requestIndex = -1;
+	public static final IntProperty BOOK_VALUE = IntProperty.of("book_binary", 0, 63);
 
 	@Override
 	public void onInitialize() {
-		// This is run as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
 		LOGGER.info("Hello Fabric world!");
 	}
 }

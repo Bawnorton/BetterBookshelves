@@ -1,12 +1,13 @@
 package com.bawnorton.betterbookshelves.util;
 
 public enum Book {
-    TOP_LEFT(0, 4, 15, 8),
-    TOP_MIDDLE(5, 10, 15, 8),
-    TOP_RIGHT(11, 15, 15, 8),
-    BOTTOM_LEFT(0, 4, 7, 0),
+    BOTTOM_RIGHT(11, 15, 7, 0),
     BOTTOM_MIDDLE(5, 10, 7, 0),
-    BOTTOM_RIGHT(11, 15, 7, 0);
+    BOTTOM_LEFT(0, 4, 7, 0),
+    TOP_RIGHT(11, 15, 15, 8),
+    TOP_MIDDLE(5, 10, 15, 8),
+    TOP_LEFT(0, 4, 15, 8),
+    NONE(-1,-1,-1,-1);
 
     private final int x1, x2, y1, y2;
     Book(int x1, int x2, int y1, int y2) {
@@ -17,7 +18,7 @@ public enum Book {
     }
 
     public int index() {
-        return this.ordinal();
+        return this == NONE ? -1 : this.ordinal();
     }
 
     public boolean isWithin(int x, int y) {
@@ -30,6 +31,6 @@ public enum Book {
                 return box;
             }
         }
-        return null;
+        return NONE;
     }
 }

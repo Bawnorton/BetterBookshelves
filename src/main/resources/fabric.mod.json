@@ -14,7 +14,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/betterbookshelves/icon.png",
+  "icon": "assets/icon.png",
 
   "environment": "*",
   "entrypoints": {
