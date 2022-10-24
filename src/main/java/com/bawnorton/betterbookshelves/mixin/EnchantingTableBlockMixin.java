@@ -1,6 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.util.IChiseledBookshelfBlockEntity;
+import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
@@ -38,7 +38,7 @@ public class EnchantingTableBlockMixin {
                 case WEST -> deltaX == 2 && Math.abs(deltaZ) <= 1;
             } && deltaY <= 1 && deltaY >= 0;
             AtomicInteger count = new AtomicInteger();
-            ((IChiseledBookshelfBlockEntity) world.getBlockEntity(chiseledBookshelfPos)).getBooks().forEach(book -> { if(book != ItemStack.EMPTY) count.getAndIncrement(); });
+            ((ChiseledBookshelfBlockEntityAccess) world.getBlockEntity(chiseledBookshelfPos)).getBooks().forEach(book -> { if(book != ItemStack.EMPTY) count.getAndIncrement(); });
             cir.setReturnValue(validFacing && count.get() >= 3);
         } else {
             cir.setReturnValue(isBookshelf);

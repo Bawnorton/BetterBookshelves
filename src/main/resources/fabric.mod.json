@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "id": "betterbookshelves",
-  "version": "${version}",
+  "version": "${mod_version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Better Bookshelves",
+  "description": "This is a mod that modifies Minecraft's Chiseled Bookshelves to be more useful.",
   "authors": [
-    "Me!"
+    "Bawnorton"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",

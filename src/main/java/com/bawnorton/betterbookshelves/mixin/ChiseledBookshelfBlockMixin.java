@@ -2,15 +2,13 @@ package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.util.Book;
-import com.bawnorton.betterbookshelves.util.IChiseledBookshelfBlockEntity;
+import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -23,16 +21,13 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -52,7 +47,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         if (!blockEntity.isEmpty()) {
             int index = getLookingAtIndex(player, blockEntity);
             if(index == -1) return ActionResult.PASS;
-            ItemStack itemStack = ((IChiseledBookshelfBlockEntity) blockEntity).getBook(index);
+            ItemStack itemStack = ((ChiseledBookshelfBlockEntityAccess) blockEntity).getBook(index);
             if(itemStack == ItemStack.EMPTY) return ActionResult.PASS;
             world.playSound(null, pos, SoundEvents.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
             int i = blockEntity.getBookCount();
@@ -70,7 +65,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         if (!blockEntity.isFull()) {
             int index = getLookingAtIndex(player, blockEntity);
             if(index == -1) return ActionResult.PASS;
-            boolean sucess = ((IChiseledBookshelfBlockEntity) blockEntity).setBook(index, stack.split(1));
+            boolean sucess = ((ChiseledBookshelfBlockEntityAccess) blockEntity).setBook(index, stack.split(1));
             if(!sucess) {
                 stack.increment(1);
                 return ActionResult.PASS;
@@ -91,7 +86,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof ChiseledBookshelfBlockEntity) {
-                IChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity = (IChiseledBookshelfBlockEntity)blockEntity;
+                ChiseledBookshelfBlockEntityAccess chiseledBookshelfBlockEntity = (ChiseledBookshelfBlockEntityAccess)blockEntity;
 
                 for(ItemStack itemStack: chiseledBookshelfBlockEntity.getBooks()) {
                     ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
@@ -101,7 +96,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
 
             }
         } else {
-            ((IChiseledBookshelfBlockEntity) world.getBlockEntity(pos)).update();
+            ((ChiseledBookshelfBlockEntityAccess) world.getBlockEntity(pos)).update();
         }
         super.onStateReplaced(state, world, pos, newState, moved);
         ci.cancel();

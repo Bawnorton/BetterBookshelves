@@ -38,7 +38,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
 
 
