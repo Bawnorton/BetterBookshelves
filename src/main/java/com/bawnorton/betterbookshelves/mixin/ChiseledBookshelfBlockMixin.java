@@ -103,6 +103,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
 
     private int getLookingAtIndex(PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
         Vec3d hitPosRel = VectorHelper.getLookOnBlockCoords(player, blockEntity);
+        if(hitPosRel == null) return -1;
         boolean isFrontFace = VectorHelper.isOnFrontFace(blockEntity, hitPosRel);
         int x = VectorHelper.getRelativeX(blockEntity, hitPosRel);
         int y = VectorHelper.getRelativeY(hitPosRel);

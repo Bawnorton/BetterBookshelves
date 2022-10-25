@@ -2,7 +2,6 @@ package com.bawnorton.betterbookshelves.util;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,8 +10,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.jetbrains.annotations.Nullable;
-
-import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
 
 public class VectorHelper {
     private static boolean isNotChiseledBookshelf(BlockState blockState) {
