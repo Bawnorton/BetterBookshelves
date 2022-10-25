@@ -3,10 +3,10 @@ package com.bawnorton.betterbookshelves.mixin;
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
+import com.bawnorton.betterbookshelves.util.VectorHelper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
@@ -19,7 +19,6 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -103,32 +102,10 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
     }
 
     private int getLookingAtIndex(PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        Vec3d cameraDir = client.getCameraEntity().getRotationVec(1.0F);
-        Vec3d cameraPos = client.getCameraEntity().getCameraPosVec(1.0F);
-        Vec3d cameraEnd = cameraPos.add(cameraDir.x * 5, cameraDir.y * 5, cameraDir.z * 5);
-        RaycastContext raycastContext = new RaycastContext(cameraPos, cameraEnd, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player);
-        Vec3d hitPos = client.world.raycast(raycastContext).getPos();
-        Vec3d hitPosRel = hitPos.subtract(Vec3d.of(blockEntity.getPos()));
-        // get the facing direction of the bookshelf
-        BlockState state = blockEntity.getWorld().getBlockState(blockEntity.getPos());
-        Direction facing = state.get(Properties.HORIZONTAL_FACING).getOpposite();
-        // check if the hit position is on the front face of the bookshelf
-        boolean isFrontFace = false;
-        int x = -1, y = (int) (hitPosRel.y * 16);
-        if (facing == Direction.NORTH && hitPosRel.z > 0.99) {
-            isFrontFace = true;
-            x = (int) (hitPosRel.x * 16);
-        } else if (facing == Direction.SOUTH && hitPosRel.z < 0.01) {
-            isFrontFace = true;
-            x = 16 - (int) (hitPosRel.x * 16);
-        } else if (facing == Direction.EAST && hitPosRel.x < 0.01) {
-            isFrontFace = true;
-            x = (int) (hitPosRel.z * 16);
-        } else if (facing == Direction.WEST && hitPosRel.x > 0.99) {
-            isFrontFace = true;
-            x = 16 - (int) (hitPosRel.z * 16);
-        }
+        Vec3d hitPosRel = VectorHelper.getLookOnBlockCoords(player, blockEntity);
+        boolean isFrontFace = VectorHelper.isOnFrontFace(blockEntity, hitPosRel);
+        int x = VectorHelper.getRelativeX(blockEntity, hitPosRel);
+        int y = VectorHelper.getRelativeY(hitPosRel);
         if (isFrontFace) {
             Book book = Book.getBook(x, y);
             return book.index();
