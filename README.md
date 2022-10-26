@@ -23,7 +23,7 @@ This mod is currently in beta. If you find any bugs, please report them on the [
 
 ### Installation 
 #### Requires Fabric
-1. Download the latest version of the mod from the [releases page](
+1. Download the latest version of the mod from the [releases page](https://www.curseforge.com/minecraft/mc-mods/better-bookshelves/files)
 2. Download the latest version of [Fabric](https://fabricmc.net/use/)
 3. Download the latest version of [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 4. Place the downloaded mod files in your mods folder
