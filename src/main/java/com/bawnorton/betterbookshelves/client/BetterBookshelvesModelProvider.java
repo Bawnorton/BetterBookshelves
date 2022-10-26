@@ -13,7 +13,6 @@ public class BetterBookshelvesModelProvider implements ModelResourceProvider {
     @Override
     public @Nullable UnbakedModel loadModelResource(Identifier resourceId, ModelProviderContext context) {
         if(resourceId.toString().contains("chiseled_bookshelf")) {
-            LOGGER.info("Loading model for " + resourceId);
             return new ChiseledBookshelfModel();
         }
         return null;

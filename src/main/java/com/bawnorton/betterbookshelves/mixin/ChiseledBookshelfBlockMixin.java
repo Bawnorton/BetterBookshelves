@@ -3,7 +3,7 @@ package com.bawnorton.betterbookshelves.mixin;
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
-import com.bawnorton.betterbookshelves.util.VectorHelper;
+import com.bawnorton.betterbookshelves.util.Helper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
@@ -13,11 +13,9 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -44,7 +42,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
     @Redirect(method = "onUse", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/ChiseledBookshelfBlock;tryRemoveBook(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/entity/ChiseledBookshelfBlockEntity;)Lnet/minecraft/util/ActionResult;"))
     private ActionResult tryRemoveLookingAtBook(BlockState state, World world, BlockPos pos, PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
         if (!blockEntity.isEmpty()) {
-            int index = getLookingAtIndex(player, blockEntity);
+            int index = Helper.getLookingAtBook(blockEntity).index();
             if(index == -1) return ActionResult.PASS;
             ItemStack itemStack = ((ChiseledBookshelfBlockEntityAccess) blockEntity).getBook(index);
             if(itemStack == ItemStack.EMPTY) return ActionResult.PASS;
@@ -62,7 +60,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
     @Redirect(method = "onUse", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/ChiseledBookshelfBlock;tryAddBook(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/entity/ChiseledBookshelfBlockEntity;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/util/ActionResult;"))
     private ActionResult tryAddLookingAtBook(BlockState state, World world, BlockPos pos, PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity, ItemStack stack) {
         if (!blockEntity.isFull()) {
-            int index = getLookingAtIndex(player, blockEntity);
+            int index = Helper.getLookingAtBook(blockEntity).index();
             if(index == -1) return ActionResult.PASS;
             boolean sucess = ((ChiseledBookshelfBlockEntityAccess) blockEntity).setBook(index, stack.split(1));
             if(!sucess) {
@@ -99,19 +97,6 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         }
         super.onStateReplaced(state, world, pos, newState, moved);
         ci.cancel();
-    }
-
-    private int getLookingAtIndex(PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
-        Vec3d hitPosRel = VectorHelper.getLookOnBlockCoords(player, blockEntity);
-        if(hitPosRel == null) return -1;
-        boolean isFrontFace = VectorHelper.isOnFrontFace(blockEntity, hitPosRel);
-        int x = VectorHelper.getRelativeX(blockEntity, hitPosRel);
-        int y = VectorHelper.getRelativeY(hitPosRel);
-        if (isFrontFace) {
-            Book book = Book.getBook(x, y);
-            return book.index();
-        }
-        return -1;
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 package com.bawnorton.betterbookshelves.client;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
+import com.bawnorton.betterbookshelves.config.Config;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
@@ -47,6 +48,12 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/base")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/chiseled_bookshelf_side")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/chiseled_bookshelf_top")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_1")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_2")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_3")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_4")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_5")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_6")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_1")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_2")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_3")),
@@ -156,18 +163,24 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         emitter.emit();
         for(int i = 0; i < 6; i++) {
             char c = base5String.charAt(i);
-            String type;
-            if(c == '1') {
-                type = "enchanted";
-            } else if(c == '2') {
-                type = "normal";
-            } else if(c == '3') {
-                type = "signed";
-            } else if(c == '4') {
-                type = "written";
-            } else continue;
             emitter.square(facing, 0, 0, 1, 1, 0);
-            emitter.spriteBake(0, SPRITES.get(type + "_book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+            if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_BOOK) {
+                String type;
+                if(c == '1') {
+                    type = "enchanted";
+                } else if(c == '2') {
+                    type = "normal";
+                } else if(c == '3') {
+                    type = "signed";
+                } else if(c == '4') {
+                    type = "written";
+                } else continue;
+                emitter.spriteBake(0, SPRITES.get(type + "_book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+            } else if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_SLOT) {
+                if(c != '0') {
+                    emitter.spriteBake(0, SPRITES.get("book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+                }
+            }
             emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
             emitter.spriteColor(0, -1, -1, -1, -1);
             emitter.emit();
