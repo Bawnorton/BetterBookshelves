@@ -12,11 +12,7 @@ import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
-import net.minecraft.class_7775;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.ModelBakeSettings;
-import net.minecraft.client.render.model.UnbakedModel;
+import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
@@ -89,12 +85,12 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
     }
 
     @Override
-    public void method_45785(Function<Identifier, UnbakedModel> function) {
+    public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
     }
 
     @Nullable
     @Override
-    public BakedModel bake(class_7775 arg, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+    public BakedModel bake(Baker arg, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
         for (SpriteIdentifier spriteId : SPRITE_IDS) {
             SPRITES.put(spriteId.getTextureId().getPath().substring(6), textureGetter.apply(spriteId));
         }
@@ -255,27 +251,33 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             if(blockEntityTag.contains("Items")) {
                 NbtList items = blockEntityTag.getList("Items", NbtElement.COMPOUND_TYPE);
                 for(NbtElement item: items) {
+                    emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
                     String nbtString = item.asString();
                     int slot = 5 - Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
                     String type = nbtString.substring(nbtString.indexOf("id:") + 4, nbtString.indexOf("\"", nbtString.indexOf("id:") + 4));
-                    switch (type) {
-                        case "minecraft:enchanted_book":
-                            type = "enchanted";
-                            break;
-                        case "minecraft:book":
-                            type = "normal";
-                            break;
-                        case "minecraft:written_book":
-                            type = "signed";
-                            break;
-                        case "minecraft:writable_book":
-                            type = "written";
-                            break;
-                        default:
-                            continue;
+                    if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_BOOK) {
+                        switch (type) {
+                            case "minecraft:enchanted_book":
+                                type = "enchanted";
+                                break;
+                            case "minecraft:book":
+                                type = "normal";
+                                break;
+                            case "minecraft:written_book":
+                                type = "signed";
+                                break;
+                            case "minecraft:writable_book":
+                                type = "written";
+                                break;
+                            default:
+                                continue;
+                        }
+                        emitter.spriteBake(0, SPRITES.get(type + "_book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                    } else if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_SLOT) {
+                        if(!type.equals("minecraft:air")) {
+                            emitter.spriteBake(0, SPRITES.get("book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                        }
                     }
-                    emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get(type + "_book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
                     emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
                     emitter.spriteColor(0, -1, -1, -1, -1);
                     emitter.emit();

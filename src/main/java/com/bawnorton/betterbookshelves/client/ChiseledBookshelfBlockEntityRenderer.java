@@ -21,8 +21,9 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
+import org.joml.AxisAngle4f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
 
             matrices.push();
             matrices.translate(0.5, 0.5, 0.5);
-            matrices.multiply(new Quaternion(0, Helper.getRotation(rotation), 0, true));
+            matrices.multiply(new Quaternionf(new AxisAngle4f((float) Math.toRadians(Helper.getRotation(rotation)), 0, 1f, 0)));
             matrices.translate((32 - (bookToRender.x2 + bookToRender.x1)) / 32.0 - 0.5, (bookToRender.y2 + bookToRender.y1) / 32.0 - 0.5, -0.6);
             matrices.scale(-textSize / 400.0f, -textSize / 400.0f, textSize / 400.0f);
 
