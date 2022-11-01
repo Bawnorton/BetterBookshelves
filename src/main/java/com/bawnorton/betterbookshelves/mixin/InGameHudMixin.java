@@ -33,19 +33,19 @@ public class InGameHudMixin {
 
     @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
     private void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
-        if(BetterBookshelves.config.textPreview != Config.HoverType.UNDER_CROSSHAIR) return;
+        if(BetterBookshelves.CONFIG.textPreview != Config.TextPreview.UNDER_CROSSHAIR) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         BlockEntity lookingAt = getLookingAtBlockEntity();
         if(lookingAt instanceof ChiseledBookshelfBlockEntity blockEntity) {
             Book lookingAtBook = Helper.getLookingAtBook(blockEntity);
             if(lookingAtBook == Book.NONE) return;
-            ItemStack book = BetterBookshelves.bookshelves.get(blockEntity.getPos()).get(lookingAtBook.index());
+            ItemStack book = BetterBookshelves.BOOKSHELVES.get(blockEntity.getPos()).get(lookingAtBook.index());
             if(book == ItemStack.EMPTY) return;
             List<Text> display = Helper.getBookText(book);
             for(int i = 0; i < display.size(); i++) {
                 Text text = display.get(i);
-                client.textRenderer.draw(matrices, text, (int)(this.scaledWidth / 2.0 - client.textRenderer.getWidth(text) / 2), (int)(this.scaledHeight / 2.0 + 15 + (i * BetterBookshelves.config.textSize)), book.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215);
+                client.textRenderer.draw(matrices, text, (int)(this.scaledWidth / 2.0 - client.textRenderer.getWidth(text) / 2), (int)(this.scaledHeight / 2.0 + 15 + (i * BetterBookshelves.CONFIG.textSize)), book.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215);
             }
         }
 

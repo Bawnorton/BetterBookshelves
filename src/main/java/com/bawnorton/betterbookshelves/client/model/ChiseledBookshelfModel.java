@@ -1,4 +1,4 @@
-package com.bawnorton.betterbookshelves.client;
+package com.bawnorton.betterbookshelves.client.model;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.config.Config;
@@ -151,7 +151,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
-        List<ItemStack> items = BetterBookshelves.bookshelves.get(pos);
+        List<ItemStack> items = BetterBookshelves.BOOKSHELVES.get(pos);
         String base5String = String.format("%6s", toBase5Representation(items)).replace(' ', '0');
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);
@@ -160,7 +160,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         for(int i = 0; i < 6; i++) {
             char c = base5String.charAt(i);
             emitter.square(facing, 0, 0, 1, 1, 0);
-            if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_BOOK) {
+            if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_BOOK) {
                 String type;
                 if(c == '1') {
                     type = "enchanted";
@@ -172,7 +172,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                     type = "written";
                 } else continue;
                 emitter.spriteBake(0, SPRITES.get(type + "_book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
-            } else if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_SLOT) {
+            } else if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_SLOT) {
                 if(c != '0') {
                     emitter.spriteBake(0, SPRITES.get("book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
                 }
@@ -255,7 +255,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                     String nbtString = item.asString();
                     int slot = 5 - Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
                     String type = nbtString.substring(nbtString.indexOf("id:") + 4, nbtString.indexOf("\"", nbtString.indexOf("id:") + 4));
-                    if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_BOOK) {
+                    if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_BOOK) {
                         switch (type) {
                             case "minecraft:enchanted_book":
                                 type = "enchanted";
@@ -273,7 +273,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                                 continue;
                         }
                         emitter.spriteBake(0, SPRITES.get(type + "_book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
-                    } else if (BetterBookshelves.config.bookTexture == Config.BookTexture.PER_SLOT) {
+                    } else if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_SLOT) {
                         if(!type.equals("minecraft:air")) {
                             emitter.spriteBake(0, SPRITES.get("book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
                         }

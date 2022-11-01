@@ -36,7 +36,7 @@ public abstract class ChiseledBookshelfBlockEntityMixin implements ChiseledBooks
     }
 
     public void update() {
-        BetterBookshelves.bookshelves.put(ths().getPos(), books);
+        BetterBookshelves.BOOKSHELVES.put(ths().getPos(), books);
     }
 
     @Override

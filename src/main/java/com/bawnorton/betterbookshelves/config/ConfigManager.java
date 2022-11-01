@@ -14,25 +14,22 @@ import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
 
 public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static Path configDir = FabricLoader.getInstance().getConfigDir();
+    static Path configPath = configDir.resolve("betterbookshelves.json");
 
     public static void loadConfig() {
-        Path configDir = FabricLoader.getInstance().getConfigDir();
-        Path configPath = configDir.resolve("betterbookshelves.json");
         Config config = load(configPath);
-        if(config.textPreview == null) {
-            config.textPreview = Config.HoverType.ON;
-        }
-        if(config.bookTexture == null) {
-            config.bookTexture = Config.BookTexture.PER_BOOK;
-        }
-        if(config.textSize == 0) {
-            config.textSize = 10;
-        }
-        BetterBookshelves.config = config;
+        if(config.textPreview == null) config.textPreview = Config.TextPreview.ON;
+        if(config.bookTexture == null) config.bookTexture = Config.BookTexture.PER_BOOK;
+        if(config.textSize == 0) config.textSize = 10;
+        BetterBookshelves.CONFIG = config;
         LOGGER.info("Loaded config: " + config);
         save(configPath, config);
     }
 
+    public static void saveConfig() {
+        save(configPath, BetterBookshelves.CONFIG);
+    }
 
     private static Config load(Path path) {
         Config config = new Config();

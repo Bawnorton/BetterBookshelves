@@ -1,4 +1,4 @@
-package com.bawnorton.betterbookshelves.client;
+package com.bawnorton.betterbookshelves.client.render;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.config.Config;
@@ -33,7 +33,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
 
     @Override
     public void render(ChiseledBookshelfBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if(BetterBookshelves.config.textPreview != Config.HoverType.ON) return;
+        if(BetterBookshelves.CONFIG.textPreview != Config.TextPreview.ON) return;
         MinecraftClient client = MinecraftClient.getInstance();
         HitResult target = client.crosshairTarget;
         if(target != null && target.getType() == HitResult.Type.BLOCK) {
@@ -46,7 +46,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
         Book bookToRender = Helper.getLookingAtBook(entity);
         if(bookToRender != Book.NONE) {
             int bookIndex = bookToRender.index();
-            ItemStack book = BetterBookshelves.bookshelves.get(entity.getPos()).get(bookIndex);
+            ItemStack book = BetterBookshelves.BOOKSHELVES.get(entity.getPos()).get(bookIndex);
             if(book == ItemStack.EMPTY) return;
             assert entity.getWorld() != null;
             BlockState state = entity.getWorld().getBlockState(entity.getPos());
@@ -55,7 +55,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
             Direction rotation = state.get(Properties.HORIZONTAL_FACING);
             TextRenderer textRenderer = client.textRenderer;
             List<Text> displayText = Helper.getBookText(book);
-            int textSize = BetterBookshelves.config.textSize;
+            int textSize = BetterBookshelves.CONFIG.textSize;
 
             matrices.push();
             matrices.translate(0.5, 0.5, 0.5);

@@ -1,7 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
 import com.bawnorton.betterbookshelves.util.Helper;
 import net.minecraft.block.*;
@@ -16,7 +15,6 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +87,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
                     ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
                 }
                 world.updateComparators(pos, (ChiseledBookshelfBlock)(Object)this);
-                BetterBookshelves.bookshelves.remove(pos);
+                BetterBookshelves.BOOKSHELVES.remove(pos);
 
             }
         } else {
