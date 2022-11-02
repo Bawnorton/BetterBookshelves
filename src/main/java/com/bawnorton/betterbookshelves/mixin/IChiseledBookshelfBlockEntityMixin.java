@@ -1,7 +1,7 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
+import com.bawnorton.betterbookshelves.access.IChiseledBookshelfBlockEntityAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.inventory.Inventories;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
-public abstract class ChiseledBookshelfBlockEntityMixin implements ChiseledBookshelfBlockEntityAccess {
+public abstract class IChiseledBookshelfBlockEntityMixin implements IChiseledBookshelfBlockEntityAccess {
 
     private List<ItemStack> books;
 

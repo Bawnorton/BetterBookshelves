@@ -6,6 +6,7 @@ import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -15,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -61,8 +63,10 @@ public class Helper {
 
     public static Vec3d getLookPos(PlayerEntity player) {
         MinecraftClient client = MinecraftClient.getInstance();
-        Vec3d cameraDir = client.getCameraEntity().getRotationVec(1.0F);
-        Vec3d cameraPos = client.getCameraEntity().getCameraPosVec(1.0F);
+        Entity cameraEntity = client.getCameraEntity();
+        if (cameraEntity == null) return Vec3d.ZERO;
+        Vec3d cameraDir = cameraEntity.getRotationVec(1.0F);
+        Vec3d cameraPos = cameraEntity.getCameraPosVec(1.0F);
         Vec3d cameraEnd = cameraPos.add(cameraDir.multiply(4));
         RaycastContext raycastContext = new RaycastContext(cameraPos, cameraEnd, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, player);
         assert client.world != null;
@@ -70,7 +74,9 @@ public class Helper {
     }
 
     private static boolean isOnFrontFace(ChiseledBookshelfBlockEntity blockEntity, Vec3d relPos) {
-        BlockState state = blockEntity.getWorld().getBlockState(blockEntity.getPos());
+        World world = blockEntity.getWorld();
+        if (world == null) return false;
+        BlockState state = world.getBlockState(blockEntity.getPos());
         if(isNotChiseledBookshelf(state)) return false;
         Direction facing = state.get(Properties.HORIZONTAL_FACING).getOpposite();
         boolean isFrontFace = false;
@@ -87,7 +93,9 @@ public class Helper {
     }
 
     private static int getRelativeX(ChiseledBookshelfBlockEntity blockEntity, Vec3d relPos) {
-        BlockState state = blockEntity.getWorld().getBlockState(blockEntity.getPos());
+        World world = blockEntity.getWorld();
+        if (world == null) return -1;
+        BlockState state = world.getBlockState(blockEntity.getPos());
         if(isNotChiseledBookshelf(state)) return -1;
         Direction facing = state.get(Properties.HORIZONTAL_FACING).getOpposite();
         int x = 0;

@@ -1,9 +1,10 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
+import com.bawnorton.betterbookshelves.access.IChiseledBookshelfBlockEntityAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
@@ -13,8 +14,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Mixin(EnchantingTableBlock.class)
 public class EnchantingTableBlockMixin {
@@ -37,9 +36,12 @@ public class EnchantingTableBlockMixin {
                 case EAST -> deltaX == -2 && Math.abs(deltaZ) <= 1;
                 case WEST -> deltaX == 2 && Math.abs(deltaZ) <= 1;
             } && deltaY <= 1 && deltaY >= 0;
-            AtomicInteger count = new AtomicInteger();
-            ((ChiseledBookshelfBlockEntityAccess) world.getBlockEntity(chiseledBookshelfPos)).getBooks().forEach(book -> { if(book != ItemStack.EMPTY) count.getAndIncrement(); });
-            cir.setReturnValue(validFacing && count.get() >= 3);
+            int count = 0;
+            BlockEntity blockEntity = world.getBlockEntity(chiseledBookshelfPos);
+            if(blockEntity instanceof IChiseledBookshelfBlockEntityAccess blockEntityAccess) {
+                for(ItemStack book: blockEntityAccess.getBooks()) if(book != ItemStack.EMPTY) count++;
+            }
+            cir.setReturnValue(validFacing && count >= 3);
         } else {
             cir.setReturnValue(isBookshelf);
         }

@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(InGameHud.class)
-public class InGameHudMixin {
+public abstract class InGameHudMixin {
     @Shadow private int scaledHeight;
 
     @Shadow private int scaledWidth;
@@ -45,10 +45,10 @@ public class InGameHudMixin {
             List<Text> display = Helper.getBookText(book);
             for(int i = 0; i < display.size(); i++) {
                 Text text = display.get(i);
-                client.textRenderer.draw(matrices, text, (int)(this.scaledWidth / 2.0 - client.textRenderer.getWidth(text) / 2), (int)(this.scaledHeight / 2.0 + 15 + (i * BetterBookshelves.CONFIG.textSize)), book.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215);
+                matrices.scale(0.1f * BetterBookshelves.CONFIG.textSize, 0.1f * BetterBookshelves.CONFIG.textSize, 0.1f * BetterBookshelves.CONFIG.textSize);
+                client.textRenderer.draw(matrices, text, (int)(this.scaledWidth / 2.0 - client.textRenderer.getWidth(text) / 2), (int)(this.scaledHeight / 2.0 + 15 + (i * 10)), book.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215);
             }
         }
-
         RenderSystem.setShaderTexture(0, InGameHud.GUI_ICONS_TEXTURE);
     }
 

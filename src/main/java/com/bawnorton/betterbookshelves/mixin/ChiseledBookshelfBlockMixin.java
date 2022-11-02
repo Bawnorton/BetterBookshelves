@@ -1,7 +1,7 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.access.ChiseledBookshelfBlockEntityAccess;
+import com.bawnorton.betterbookshelves.access.IChiseledBookshelfBlockEntityAccess;
 import com.bawnorton.betterbookshelves.util.Helper;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -31,18 +31,19 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
     @Shadow @Final public static IntProperty BOOKS_STORED;
     @Shadow @Final public static IntProperty LAST_INTERACTION_BOOK_SLOT;
 
-    @Shadow protected abstract void appendProperties(StateManager.Builder<Block, BlockState> builder);
-
+    @SuppressWarnings("unused")
     protected ChiseledBookshelfBlockMixin(Settings settings) {
-        super(settings.nonOpaque());
+        super(settings);
     }
+
+    @Shadow protected abstract void appendProperties(StateManager.Builder<Block, BlockState> builder);
 
     @Redirect(method = "onUse", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/ChiseledBookshelfBlock;tryRemoveBook(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/entity/ChiseledBookshelfBlockEntity;)Lnet/minecraft/util/ActionResult;"))
     private ActionResult tryRemoveLookingAtBook(BlockState state, World world, BlockPos pos, PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
         if (!blockEntity.isEmpty()) {
             int index = Helper.getLookingAtBook(blockEntity).index();
             if(index == -1) return ActionResult.PASS;
-            ItemStack itemStack = ((ChiseledBookshelfBlockEntityAccess) blockEntity).getBook(index);
+            ItemStack itemStack = ((IChiseledBookshelfBlockEntityAccess) blockEntity).getBook(index);
             if(itemStack == ItemStack.EMPTY) return ActionResult.PASS;
             world.playSound(null, pos, SoundEvents.BLOCK_WOOD_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
             int i = blockEntity.getBookCount();
@@ -60,7 +61,7 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         if (!blockEntity.isFull()) {
             int index = Helper.getLookingAtBook(blockEntity).index();
             if(index == -1) return ActionResult.PASS;
-            boolean sucess = ((ChiseledBookshelfBlockEntityAccess) blockEntity).setBook(index, stack.split(1));
+            boolean sucess = ((IChiseledBookshelfBlockEntityAccess) blockEntity).setBook(index, stack.split(1));
             if(!sucess) {
                 stack.increment(1);
                 return ActionResult.PASS;
@@ -76,12 +77,13 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
         return ActionResult.CONSUME;
     }
 
+    @SuppressWarnings("deprecation")
     @Inject(method = "onStateReplaced", at = @At("HEAD"), cancellable = true)
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved, CallbackInfo ci) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof ChiseledBookshelfBlockEntity) {
-                ChiseledBookshelfBlockEntityAccess chiseledBookshelfBlockEntity = (ChiseledBookshelfBlockEntityAccess)blockEntity;
+                IChiseledBookshelfBlockEntityAccess chiseledBookshelfBlockEntity = (IChiseledBookshelfBlockEntityAccess)blockEntity;
 
                 for(ItemStack itemStack: chiseledBookshelfBlockEntity.getBooks()) {
                     ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
@@ -91,7 +93,10 @@ public abstract class ChiseledBookshelfBlockMixin extends BlockWithEntity {
 
             }
         } else {
-            ((ChiseledBookshelfBlockEntityAccess) world.getBlockEntity(pos)).update();
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if(blockEntity instanceof IChiseledBookshelfBlockEntityAccess blockEntityAccess) {
+                blockEntityAccess.update();
+            }
         }
         super.onStateReplaced(state, world, pos, newState, moved);
         ci.cancel();

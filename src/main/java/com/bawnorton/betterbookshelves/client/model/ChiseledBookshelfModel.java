@@ -149,6 +149,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        if(renderer == null) return;
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         List<ItemStack> items = BetterBookshelves.BOOKSHELVES.get(pos);
@@ -184,17 +185,10 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         }
         for(Direction dir: Direction.values()) {
             if(dir != facing) {
-                if(dir != Direction.UP && dir != Direction.DOWN) {
-                    emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_side"), MutableQuadView.BAKE_LOCK_UV);
-                    emitter.spriteColor(0, -1, -1, -1, -1);
-                    emitter.emit();
-                } else {
-                    emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_top"), MutableQuadView.BAKE_LOCK_UV);
-                    emitter.spriteColor(0, -1, -1, -1, -1);
-                    emitter.emit();
-                }
+                emitter.square(dir, 0, 0, 1, 1, 0);
+                emitter.spriteBake(0, SPRITES.get(dir != Direction.UP && dir != Direction.DOWN ? "chiseled_bookshelf_side" : "chiseled_bookshelf_top"), MutableQuadView.BAKE_LOCK_UV);
+                emitter.spriteColor(0, -1, -1, -1, -1);
+                emitter.emit();
             }
         }
         context.meshConsumer().accept(mesh);
@@ -221,6 +215,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
     @Override
     public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        if(renderer == null) return;
         QuadEmitter emitter = context.getEmitter();
         NbtCompound tag = stack.getNbt();
         for(Direction dir : Direction.values()) {
