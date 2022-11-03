@@ -56,7 +56,7 @@ public class Helper {
 
     @Nullable
     private static Vec3d getLookOnBlockCoords(PlayerEntity player, ChiseledBookshelfBlockEntity blockEntity) {
-        if (player.squaredDistanceTo(blockEntity.getPos().getX(), blockEntity.getPos().getY(), blockEntity.getPos().getZ()) > 25) return null;
+        if (!blockEntity.canPlayerUse(player)) return null;
         Vec3d hitPos = getLookPos(player);
         return hitPos.subtract(Vec3d.of(blockEntity.getPos()));
     }

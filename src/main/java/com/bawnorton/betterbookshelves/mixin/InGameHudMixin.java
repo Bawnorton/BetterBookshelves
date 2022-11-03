@@ -40,7 +40,7 @@ public abstract class InGameHudMixin {
         if(lookingAt instanceof ChiseledBookshelfBlockEntity blockEntity) {
             Book lookingAtBook = Helper.getLookingAtBook(blockEntity);
             if(lookingAtBook == Book.NONE) return;
-            ItemStack book = BetterBookshelves.BOOKSHELVES.get(blockEntity.getPos()).get(lookingAtBook.index());
+            ItemStack book = blockEntity.getStack(lookingAtBook.index());
             if(book == ItemStack.EMPTY) return;
             List<Text> display = Helper.getBookText(book);
             for(int i = 0; i < display.size(); i++) {

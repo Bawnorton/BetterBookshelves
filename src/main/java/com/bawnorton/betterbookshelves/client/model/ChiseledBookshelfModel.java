@@ -12,6 +12,8 @@ import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
@@ -152,7 +154,13 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         if(renderer == null) return;
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
-        List<ItemStack> items = BetterBookshelves.BOOKSHELVES.get(pos);
+        BlockEntity blockEntity = blockView.getBlockEntity(pos);
+        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity)) return;
+        ChiseledBookshelfBlockEntity bookshelf = (ChiseledBookshelfBlockEntity) blockEntity;
+        List<ItemStack> items = new ArrayList<>();
+        for(int i = 0; i < bookshelf.size(); i++) {
+            items.add(bookshelf.getStack(i));
+        }
         String base5String = String.format("%6s", toBase5Representation(items)).replace(' ', '0');
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);

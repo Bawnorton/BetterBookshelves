@@ -45,7 +45,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
         Book bookToRender = Helper.getLookingAtBook(entity);
         if(bookToRender != Book.NONE) {
             int bookIndex = bookToRender.index();
-            ItemStack book = BetterBookshelves.BOOKSHELVES.get(entity.getPos()).get(bookIndex);
+            ItemStack book = entity.getStack(bookIndex);
             if(book == ItemStack.EMPTY) return;
             assert entity.getWorld() != null;
             BlockState state = entity.getWorld().getBlockState(entity.getPos());
