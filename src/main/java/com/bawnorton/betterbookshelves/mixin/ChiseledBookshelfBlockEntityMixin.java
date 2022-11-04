@@ -1,22 +1,18 @@
 package com.bawnorton.betterbookshelves.mixin;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
 public abstract class ChiseledBookshelfBlockEntityMixin {
 
-    @Inject(method = "getLastBook", at=@At("HEAD"))
-    private void getLastBook(CallbackInfoReturnable<ItemStack> cir) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Inject(method = "addBook", at=@At("HEAD"))
-    private void addBook(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        throw new UnsupportedOperationException();
+    @Redirect(method = "updateState", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"))
+    private boolean updateState(World instance, BlockPos pos, BlockState state, int flags) {
+        return false;
     }
 }

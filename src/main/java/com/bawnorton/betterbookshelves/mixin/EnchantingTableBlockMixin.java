@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EnchantingTableBlock.class)
-public class EnchantingTableBlockMixin {
+public abstract class EnchantingTableBlockMixin {
 
     @Inject(method = "canAccessBookshelf", at = @At("RETURN"), cancellable = true)
     private static void canAccessBookshelf(World world, BlockPos tablePos, BlockPos bookshelfOffset, CallbackInfoReturnable<Boolean> cir) {

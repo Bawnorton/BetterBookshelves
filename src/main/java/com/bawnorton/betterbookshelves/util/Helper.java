@@ -13,6 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -20,12 +21,21 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Helper {
+public abstract class Helper {
     private static boolean isNotChiseledBookshelf(BlockState blockState) {
         return blockState.getBlock() != Blocks.CHISELED_BOOKSHELF;
+    }
+
+    public static List<ItemStack> getInventory(ChiseledBookshelfBlockEntity instance) {
+        List<ItemStack> inventory = new ArrayList<>();
+        for(int i = 0; i < instance.size(); i++) {
+            inventory.add(instance.getStack(i));
+        }
+        return inventory;
     }
 
     public static Book getLookingAtBook(ChiseledBookshelfBlockEntity entity) {

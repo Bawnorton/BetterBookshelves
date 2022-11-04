@@ -45,7 +45,6 @@ public abstract class InGameHudMixin {
             List<Text> display = Helper.getBookText(book);
             for(int i = 0; i < display.size(); i++) {
                 Text text = display.get(i);
-                matrices.scale(0.1f * BetterBookshelves.CONFIG.textSize, 0.1f * BetterBookshelves.CONFIG.textSize, 0.1f * BetterBookshelves.CONFIG.textSize);
                 client.textRenderer.draw(matrices, text, (int)(this.scaledWidth / 2.0 - client.textRenderer.getWidth(text) / 2), (int)(this.scaledHeight / 2.0 + 15 + (i * 10)), book.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215);
             }
         }

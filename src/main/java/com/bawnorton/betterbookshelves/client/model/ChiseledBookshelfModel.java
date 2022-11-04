@@ -2,6 +2,7 @@ package com.bawnorton.betterbookshelves.client.model;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.config.Config;
+import com.bawnorton.betterbookshelves.util.Helper;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
@@ -13,7 +14,9 @@ import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
@@ -38,6 +41,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
+import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
 
 
 public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricBakedModel {
@@ -151,21 +155,19 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-        if(renderer == null) return;
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
-        BlockEntity blockEntity = blockView.getBlockEntity(pos);
-        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity)) return;
-        ChiseledBookshelfBlockEntity bookshelf = (ChiseledBookshelfBlockEntity) blockEntity;
-        List<ItemStack> items = new ArrayList<>();
-        for(int i = 0; i < bookshelf.size(); i++) {
-            items.add(bookshelf.getStack(i));
-        }
-        String base5String = String.format("%6s", toBase5Representation(items)).replace(' ', '0');
+        if(renderer == null) return;
+
+        Optional<ChiseledBookshelfBlockEntity> blockEntity = blockView.getBlockEntity(pos, BlockEntityType.CHISELED_BOOKSHELF);
+        if(blockEntity.isEmpty()) return;
+        String base5String = String.format("%6s", toBase5Representation(Helper.getInventory(blockEntity.get()))).replace(' ', '0');
+
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
         emitter.emit();
+
         for(int i = 0; i < 6; i++) {
             char c = base5String.charAt(i);
             emitter.square(facing, 0, 0, 1, 1, 0);
@@ -189,7 +191,6 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
             emitter.spriteColor(0, -1, -1, -1, -1);
             emitter.emit();
-
         }
         for(Direction dir: Direction.values()) {
             if(dir != facing) {

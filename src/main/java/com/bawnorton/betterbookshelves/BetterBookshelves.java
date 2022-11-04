@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 public class BetterBookshelves implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("betterbookshelves");
 	public static Config CONFIG = new Config();
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Loaded BetterBookshelves");
