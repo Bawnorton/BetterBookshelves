@@ -13,17 +13,12 @@ import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -41,8 +36,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
-import static com.bawnorton.betterbookshelves.BetterBookshelves.LOGGER;
-
 
 public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricBakedModel {
 
@@ -159,9 +152,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         if(renderer == null) return;
 
-        Optional<ChiseledBookshelfBlockEntity> blockEntity = blockView.getBlockEntity(pos, BlockEntityType.CHISELED_BOOKSHELF);
-        if(blockEntity.isEmpty()) return;
-        String base5String = String.format("%6s", toBase5Representation(Helper.getInventory(blockEntity.get()))).replace(' ', '0');
+        String base5String = String.format("%6s", Helper.getBookCache(pos)).replace(' ', '0');
 
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);
@@ -201,24 +192,6 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             }
         }
         context.meshConsumer().accept(mesh);
-    }
-
-    private String toBase5Representation(List<ItemStack> books) {
-        StringBuilder sb = new StringBuilder();
-        for(ItemStack stack : books) {
-            if(stack == ItemStack.EMPTY) {
-                sb.append("0");
-            } else if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                sb.append("1");
-            } else if (stack.getItem() == Items.BOOK) {
-                sb.append("2");
-            } else if (stack.getItem() == Items.WRITTEN_BOOK) {
-                sb.append("3");
-            } else if (stack.getItem() == Items.WRITABLE_BOOK) {
-                sb.append("4");
-            }
-        }
-        return sb.reverse().toString();
     }
 
     @Override

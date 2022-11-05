@@ -1,18 +1,27 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import net.minecraft.block.BlockState;
+import com.bawnorton.betterbookshelves.util.Helper;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
 public abstract class ChiseledBookshelfBlockEntityMixin {
 
-    @Redirect(method = "updateState", at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"))
-    private boolean updateState(World instance, BlockPos pos, BlockState state, int flags) {
-        return false;
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void init(CallbackInfo ci) {
+        Helper.updateCache((ChiseledBookshelfBlockEntity) (Object) this);
+    }
+
+    @Inject(method = "updateState", at = @At("TAIL"))
+    private void updateState(CallbackInfo ci) {
+        Helper.updateCache((ChiseledBookshelfBlockEntity) (Object) this);
+    }
+
+    @Inject(method = "readNbt", at = @At("TAIL"))
+    private void readNbt(CallbackInfo ci) {
+        Helper.updateCache((ChiseledBookshelfBlockEntity) (Object) this);
     }
 }

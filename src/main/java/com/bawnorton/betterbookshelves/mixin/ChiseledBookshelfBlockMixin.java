@@ -23,8 +23,9 @@ public class ChiseledBookshelfBlockMixin {
         for(ItemStack stack : inventory) if(!stack.isEmpty()) count++;
         World world = instance.getWorld();
         if(world != null) {
-            BlockState newState = instance.getCachedState().with(Properties.BOOKS_STORED, count).with(Properties.LAST_INTERACTION_BOOK_SLOT, instance.size() - slot);
+            BlockState newState = instance.getCachedState().with(Properties.BOOKS_STORED, count).with(Properties.LAST_INTERACTION_BOOK_SLOT, slot + 1);
             world.setBlockState(instance.getPos(), newState, Block.NOTIFY_ALL);
+            Helper.updateCache(instance);
         }
     }
 

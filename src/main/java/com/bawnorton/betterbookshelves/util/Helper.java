@@ -26,8 +26,33 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Helper {
+    private static final Map<BlockPos, String> bookCache = new HashMap<>();
+
     private static boolean isNotChiseledBookshelf(BlockState blockState) {
         return blockState.getBlock() != Blocks.CHISELED_BOOKSHELF;
+    }
+
+    public static String getBookCache(BlockPos pos) {
+        return bookCache.get(pos);
+    }
+
+    public static void updateCache(ChiseledBookshelfBlockEntity instance) {
+        List<ItemStack> books = getInventory(instance);
+        StringBuilder sb = new StringBuilder();
+        for(ItemStack stack : books) {
+            if(stack == ItemStack.EMPTY) {
+                sb.append("0");
+            } else if (stack.getItem() == Items.ENCHANTED_BOOK) {
+                sb.append("1");
+            } else if (stack.getItem() == Items.BOOK) {
+                sb.append("2");
+            } else if (stack.getItem() == Items.WRITTEN_BOOK) {
+                sb.append("3");
+            } else if (stack.getItem() == Items.WRITABLE_BOOK) {
+                sb.append("4");
+            }
+        }
+        bookCache.put(instance.getPos(), sb.toString());
     }
 
     public static List<ItemStack> getInventory(ChiseledBookshelfBlockEntity instance) {
