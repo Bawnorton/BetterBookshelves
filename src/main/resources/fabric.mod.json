@@ -4,13 +4,14 @@
   "version": "${version}",
 
   "name": "Better Bookshelves",
-  "description": "This is a mod that modifies Minecraft's Chiseled Bookshelves to be more useful.",
+  "description": "This is a mod that makes Chiseled Bookshelves in Minecraft more useful.",
   "authors": [
     "Bawnorton"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://bawnorton.com",
+    "sources": "https://github.com/Benjamin-Norton/BetterBookshelves",
+    "issues": "https://github.com/Benjamin-Norton/BetterBookshelves/issues"
   },
 
   "license": "MIT",
@@ -36,6 +37,13 @@
     "java": ">=17"
   },
   "suggests": {
-    "another-mod": "*"
+    "modmenu": ">=5.0.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/jEGF5fb"
+      }
+    }
   }
 }
