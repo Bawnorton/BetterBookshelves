@@ -24,9 +24,15 @@ public class ConfigManager {
     public static void loadConfig() {
         Config config = load();
         if(config.textPreview == null) config.textPreview = Config.TextPreview.ON;
-        if(config.bookTexture == null) config.bookTexture = Config.BookTexture.PER_BOOK;
-        if(config.textSize == 0) config.textSize = 10;
+        if(config.perBookTexture == null) config.perBookTexture = true;
+        if(config.textSize == null) config.textSize = 10;
+        if(config.bookTypeComparatorOutput == null) config.bookTypeComparatorOutput = false;
+
+        if(config.textSize > 20) config.textSize = 20;
+        if(config.textSize < 5) config.textSize = 5;
+
         BetterBookshelves.CONFIG = config;
+        save();
         LOGGER.info("Loaded config: " + config);
     }
 

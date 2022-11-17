@@ -1,61 +1,36 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.util.Helper;
+import com.bawnorton.betterbookshelves.BetterBookshelves;
+import com.bawnorton.betterbookshelves.state.property.BetterBookshelvesProperties;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChiseledBookshelfBlock;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
+import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
-
 @Mixin(ChiseledBookshelfBlock.class)
-public class ChiseledBookshelfBlockMixin {
+public abstract class ChiseledBookshelfBlockMixin {
+    @ModifyVariable(method = "<init>", at = @At("STORE"), ordinal = 0)
+    private BlockState init(BlockState state) {
+        return state.with(BetterBookshelvesProperties.LAST_BOOK_TYPE, 0);
+    }
 
-    private static void updateState(ChiseledBookshelfBlockEntity instance, int slot) {
-        List<ItemStack> inventory = Helper.getInventory(instance);
-        int count = 0;
-        for(ItemStack stack : inventory) if(!stack.isEmpty()) count++;
-        World world = instance.getWorld();
-        if(world != null) {
-            BlockState newState = instance.getCachedState().with(Properties.BOOKS_STORED, count).with(Properties.LAST_INTERACTION_BOOK_SLOT, slot + 1);
-            world.setBlockState(instance.getPos(), newState, Block.NOTIFY_ALL);
-            Helper.updateCache(instance);
+    @Inject(method = "appendProperties", at = @At(value = "INVOKE", target = "Lnet/minecraft/state/StateManager$Builder;add([Lnet/minecraft/state/property/Property;)Lnet/minecraft/state/StateManager$Builder;", ordinal = 1, shift = At.Shift.AFTER))
+    private void appendProperties(StateManager.Builder<Block, BlockState> builder, CallbackInfo ci) {
+        builder.add(BetterBookshelvesProperties.LAST_BOOK_TYPE);
+    }
+
+    @Inject(method = "getComparatorOutput", at = @At("RETURN"), cancellable = true)
+    private void getComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
+        if(BetterBookshelves.CONFIG.bookTypeComparatorOutput) {
+            cir.setReturnValue(state.get(BetterBookshelvesProperties.LAST_BOOK_TYPE));
         }
-    }
-
-    @Redirect(method = "tryRemoveBook", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/entity/ChiseledBookshelfBlockEntity;getLastBook()Lnet/minecraft/item/ItemStack;"))
-    private static ItemStack tryRemoveBook(ChiseledBookshelfBlockEntity instance) {
-        int slot = Helper.getLookingAtBook(instance).index();
-        if(slot == -1) return ItemStack.EMPTY;
-        ItemStack item = instance.getStack(slot);
-        instance.setStack(slot, ItemStack.EMPTY);
-        updateState(instance, slot);
-        return item;
-    }
-
-    @Redirect(method = "tryAddBook", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/ChiseledBookshelfBlockEntity;addBook(Lnet/minecraft/item/ItemStack;)Z"))
-    private static boolean addBook(ChiseledBookshelfBlockEntity instance, ItemStack stack) {
-        int slot = Helper.getLookingAtBook(instance).index();
-        if(instance.getStack(slot) == ItemStack.EMPTY && slot != -1) {
-            instance.setStack(slot, stack.split(1));
-            updateState(instance, slot);
-            return true;
-        }
-        return false;
-    }
-
-    @Redirect(method = "tryAddBook", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;increment(I)V", ordinal = 1))
-    private static void tryAddBook(ItemStack instance, int amount) {
     }
 }

@@ -3,15 +3,20 @@ package com.bawnorton.betterbookshelves.config;
 import com.google.gson.annotations.SerializedName;
 
 public class Config {
+    @SerializedName("per_book_texture")
+    public Boolean perBookTexture = true;
+    @SerializedName("text_preview")
     public TextPreview textPreview = TextPreview.ON;
-    public BookTexture bookTexture = BookTexture.PER_BOOK;
-    public int textSize = 10;
+    @SerializedName("text_size")
+    public Integer textSize = 10;
+    @SerializedName("book_type_comparator_output")
+    public Boolean bookTypeComparatorOutput = false;
 
     @Override
     public String toString() {
         return "Config{" +
                 "textPreview=" + textPreview +
-                ", bookTexture=" + bookTexture +
+                ", perBookTexture=" + perBookTexture +
                 ", textSize=" + textSize +
                 '}';
     }
@@ -20,10 +25,5 @@ public class Config {
         @SerializedName("off") OFF,
         @SerializedName("on") ON,
         @SerializedName("under_crosshair") UNDER_CROSSHAIR
-    }
-
-    public enum BookTexture {
-        @SerializedName("per_slot") PER_SLOT,
-        @SerializedName("per_book") PER_BOOK
     }
 }

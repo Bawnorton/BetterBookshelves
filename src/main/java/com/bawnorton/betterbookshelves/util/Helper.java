@@ -1,7 +1,9 @@
 package com.bawnorton.betterbookshelves.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
@@ -13,6 +15,9 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -21,38 +26,46 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class Helper {
-    private static final Map<BlockPos, String> bookCache = new HashMap<>();
-
     private static boolean isNotChiseledBookshelf(BlockState blockState) {
         return blockState.getBlock() != Blocks.CHISELED_BOOKSHELF;
     }
 
-    public static String getBookCache(BlockPos pos) {
-        return bookCache.get(pos);
-    }
+    public static Pair<Book, ItemStack> getLookingAtBook(BlockEntity entity) {
+        Pair<Book, ItemStack> book = new Pair<>(Book.NONE, ItemStack.EMPTY);
+        MinecraftClient client = MinecraftClient.getInstance();
+        HitResult target = client.crosshairTarget;
+        if(!(target != null && target.getType() == HitResult.Type.BLOCK)) return book;
 
-    public static void updateCache(ChiseledBookshelfBlockEntity instance) {
-        List<ItemStack> books = getInventory(instance);
-        StringBuilder sb = new StringBuilder();
-        for(ItemStack stack : books) {
-            if(stack == ItemStack.EMPTY) {
-                sb.append("0");
-            } else if (stack.getItem() == Items.ENCHANTED_BOOK) {
-                sb.append("1");
-            } else if (stack.getItem() == Items.BOOK) {
-                sb.append("2");
-            } else if (stack.getItem() == Items.WRITTEN_BOOK) {
-                sb.append("3");
-            } else if (stack.getItem() == Items.WRITABLE_BOOK) {
-                sb.append("4");
-            }
-        }
-        bookCache.put(instance.getPos(), sb.toString());
+        BlockHitResult blockHitResult = (BlockHitResult) target;
+        BlockPos pos = blockHitResult.getBlockPos();
+        assert client.world != null;
+        if(entity == null) entity = client.world.getBlockEntity(pos);
+        if(!(Objects.equals(client.world.getBlockEntity(pos), entity)) || entity == null) return book;
+
+        BlockState state = entity.getCachedState();
+        if(isNotChiseledBookshelf(state)) return book;
+
+        ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity = (ChiseledBookshelfBlockEntity) entity;
+        Book bookToRender = Helper.getBook(chiseledBookshelfBlockEntity);
+        if(!state.isOf(Blocks.CHISELED_BOOKSHELF)) return book;
+        if(bookToRender == Book.NONE) return book;
+
+        if(!switch (bookToRender.getSlot()) {
+            case 0 -> state.get(Properties.SLOT_0_OCCUPIED);
+            case 1 -> state.get(Properties.SLOT_1_OCCUPIED);
+            case 2 -> state.get(Properties.SLOT_2_OCCUPIED);
+            case 3 -> state.get(Properties.SLOT_3_OCCUPIED);
+            case 4 -> state.get(Properties.SLOT_4_OCCUPIED);
+            case 5 -> state.get(Properties.SLOT_5_OCCUPIED);
+            default -> false;
+        }) return book;
+
+        return new Pair<>(bookToRender, chiseledBookshelfBlockEntity.getStack(bookToRender.getSlot()));
     }
 
     public static List<ItemStack> getInventory(ChiseledBookshelfBlockEntity instance) {
@@ -63,7 +76,7 @@ public abstract class Helper {
         return inventory;
     }
 
-    public static Book getLookingAtBook(ChiseledBookshelfBlockEntity entity) {
+    private static Book getBook(ChiseledBookshelfBlockEntity entity) {
         assert MinecraftClient.getInstance().player != null;
         Vec3d relPos = Helper.getLookOnBlockCoords(MinecraftClient.getInstance().player, entity);
         if(relPos == null) return Book.NONE;

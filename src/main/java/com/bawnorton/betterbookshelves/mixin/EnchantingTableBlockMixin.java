@@ -38,7 +38,7 @@ public abstract class EnchantingTableBlockMixin {
             int count = 0;
             BlockEntity blockEntity = world.getBlockEntity(chiseledBookshelfPos);
             if(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity) {
-                count = chiseledBookshelfBlockEntity.getBookCount();
+                count = 6 - chiseledBookshelfBlockEntity.getOpenSlotCount();
             }
             cir.setReturnValue(validFacing && count >= 3);
         } else {

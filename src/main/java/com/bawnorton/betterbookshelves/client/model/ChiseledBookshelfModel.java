@@ -1,8 +1,10 @@
 package com.bawnorton.betterbookshelves.client.model;
 
 import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.config.Config;
+import com.bawnorton.betterbookshelves.state.property.BetterBookshelvesProperties;
 import com.bawnorton.betterbookshelves.util.Helper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
@@ -13,16 +15,21 @@ import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -37,42 +44,43 @@ import java.util.function.Supplier;
 
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
 
+@Environment(EnvType.CLIENT)
 public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricBakedModel {
 
     private static final SpriteIdentifier[] SPRITE_IDS = new SpriteIdentifier[]{
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/base")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/chiseled_bookshelf_side")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/chiseled_bookshelf_top")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_1")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_2")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_3")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_4")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_5")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_6")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_1")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_2")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_3")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_4")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_5")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/default_6")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_1")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_2")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_3")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_4")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_5")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/enchanted_book_6")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_1")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_2")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_3")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_4")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_5")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/normal_book_6")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_1")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_2")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_3")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_4")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_5")),
-        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/signed_book_6")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_1")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_2")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_3")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_4")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_5")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/book_6")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_1")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_2")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_3")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_4")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_5")),
         new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/written_book_6")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_1")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_2")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_3")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_4")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_5")),
+        new SpriteIdentifier(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, new Identifier("minecraft", "block/writable_book_6")),
 
     };
     private final Map<String, Sprite> SPRITES = new HashMap<>();
@@ -151,38 +159,39 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         if(renderer == null) return;
-
-        String base5String = String.format("%6s", Helper.getBookCache(pos)).replace(' ', '0');
-
+        BlockEntity blockEntity = blockView.getBlockEntity(pos);
+        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) return;
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("base"), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
         emitter.emit();
 
-        for(int i = 0; i < 6; i++) {
-            char c = base5String.charAt(i);
-            emitter.square(facing, 0, 0, 1, 1, 0);
-            if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_BOOK) {
-                String type;
-                if(c == '1') {
-                    type = "enchanted";
-                } else if(c == '2') {
-                    type = "normal";
-                } else if(c == '3') {
-                    type = "signed";
-                } else if(c == '4') {
-                    type = "written";
-                } else continue;
-                emitter.spriteBake(0, SPRITES.get(type + "_book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
-            } else if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_SLOT) {
-                if(c != '0') {
-                    emitter.spriteBake(0, SPRITES.get("book_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+        List<ItemStack> inventory = Helper.getInventory(chiseledBookshelfBlockEntity);
+        List<BooleanProperty> slotProperties = List.of(Properties.SLOT_0_OCCUPIED, Properties.SLOT_1_OCCUPIED, Properties.SLOT_2_OCCUPIED, Properties.SLOT_3_OCCUPIED, Properties.SLOT_4_OCCUPIED, Properties.SLOT_5_OCCUPIED);
+        for(int i = 0; i < inventory.size(); i++) {
+            if(state.get(slotProperties.get(i))) {
+                Item item = inventory.get(i).getItem();
+                if(item == Items.AIR || i == state.get(Properties.LAST_INTERACTION_BOOK_SLOT) - 1) {
+                    item = switch (state.get(BetterBookshelvesProperties.LAST_BOOK_TYPE)) {
+                        case 1 -> Items.BOOK;
+                        case 2 -> Items.WRITABLE_BOOK;
+                        case 3 -> Items.WRITTEN_BOOK;
+                        case 4 -> Items.ENCHANTED_BOOK;
+                        default -> Items.AIR;
+                    };
+                }
+                emitter.square(facing, 0, 0, 1, 1, 0);
+                if (BetterBookshelves.CONFIG.perBookTexture) {
+                    emitter.spriteBake(0, SPRITES.get(item + "_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+                } else {
+                    emitter.spriteBake(0, SPRITES.get("default_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
                 }
             }
             emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
             emitter.spriteColor(0, -1, -1, -1, -1);
             emitter.emit();
         }
+
         for(Direction dir: Direction.values()) {
             if(dir != facing) {
                 emitter.square(dir, 0, 0, 1, 1, 0);
@@ -231,28 +240,12 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                     emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
                     String nbtString = item.asString();
                     int slot = 5 - Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
-                    String type = nbtString.substring(nbtString.indexOf("id:") + 4, nbtString.indexOf("\"", nbtString.indexOf("id:") + 4));
-                    if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_BOOK) {
-                        switch (type) {
-                            case "minecraft:enchanted_book":
-                                type = "enchanted";
-                                break;
-                            case "minecraft:book":
-                                type = "normal";
-                                break;
-                            case "minecraft:written_book":
-                                type = "signed";
-                                break;
-                            case "minecraft:writable_book":
-                                type = "written";
-                                break;
-                            default:
-                                continue;
-                        }
-                        emitter.spriteBake(0, SPRITES.get(type + "_book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
-                    } else if (BetterBookshelves.CONFIG.bookTexture == Config.BookTexture.PER_SLOT) {
+                    String type = nbtString.substring(nbtString.indexOf("minecraft:") + 10, nbtString.indexOf("\"", nbtString.indexOf("minecraft:") + 10));
+                    if (BetterBookshelves.CONFIG.perBookTexture) {
+                        emitter.spriteBake(0, SPRITES.get(type + "_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                    } else {
                         if(!type.equals("minecraft:air")) {
-                            emitter.spriteBake(0, SPRITES.get("book_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                            emitter.spriteBake(0, SPRITES.get("default_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
                         }
                     }
                     emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());

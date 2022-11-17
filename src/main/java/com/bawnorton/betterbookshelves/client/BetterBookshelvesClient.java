@@ -4,6 +4,8 @@ import com.bawnorton.betterbookshelves.client.render.BetterBookshelvesModelProvi
 import com.bawnorton.betterbookshelves.client.render.ChiseledBookshelfBlockEntityRenderer;
 import com.bawnorton.betterbookshelves.config.ConfigManager;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
@@ -12,6 +14,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
+@Environment(EnvType.CLIENT)
 public class BetterBookshelvesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
