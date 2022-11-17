@@ -6,19 +6,21 @@ Better Bookshelves
 This mod is currently in beta. If you find any bugs, please report them on the [issue tracker](https://github.com/Benjamin-Norton/BetterBookshelves/issues)
 
 ### Features
-* Dedicated Book Slots:
-  * Instead of each book being added sequentially, the books are added to / removed from the slot the player clicks on.
+* Book Type Rendering:
+  * Books will render on the bookshelf differently depending on the type of book.
 * Enchanting Table Integration:
   * The enchanting table will now treat Chiseled Bookshelves that contain 3 or more books as valid bookshelves for the purpose of enchanting. (The bookshelves must be facing the enchanting table)
 * Book Labels:
   * Hovering over a book in the Chiseled Bookshelf will display the book's title and relevant NBT data
 * Config:
   * Enable / Disable Book Labels or have the label render under the cursor
-    * textPreview: on/off/under_crosshair (default: on)
+    * text_preview: on/off/under_crosshair (default: on)
   * Change the type of book textures used
-    * bookTexture: per_book/per_slot (default: per_book)
+    * per_book_texture: (true/false) (default: true)
   * Change Book Label Size
-    * textSize: whole number (default: 10)
+    * text_size: whole number between 5 and 20 (default: 10)
+  * Change Comparator Output
+    * book_type_comparator_output: (true/false) (default: false)
 
 ### Installation
 #### Requires Fabric
