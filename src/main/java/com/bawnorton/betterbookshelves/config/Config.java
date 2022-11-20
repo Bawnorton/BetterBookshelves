@@ -176,10 +176,10 @@ public class Config {
     }
 
     public enum BookType {
-        @SerializedName("book") BOOK("3E9293", 0),
-        @SerializedName("written_book") WRITTEN_BOOK("C8335B", 3),
-        @SerializedName("writable_book") WRITABLE_BOOK("749B48", 1),
-        @SerializedName("enchanted_book") ENCHANTED_BOOK("651A96", 2);
+        @SerializedName("minecraft:book") BOOK("3E9293", 0),
+        @SerializedName("minecraft:written_book") WRITTEN_BOOK("C8335B", 3),
+        @SerializedName("minecraft:writable_book") WRITABLE_BOOK("749B48", 1),
+        @SerializedName("minecraft:enchanted_book") ENCHANTED_BOOK("651A96", 2);
 
         private final String hexColor;
         private final int model;
