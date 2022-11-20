@@ -2,6 +2,7 @@ package com.bawnorton.betterbookshelves.client;
 
 import com.bawnorton.betterbookshelves.client.render.BetterBookshelvesModelProvider;
 import com.bawnorton.betterbookshelves.client.render.ChiseledBookshelfBlockEntityRenderer;
+import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.config.ConfigManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
