@@ -1,6 +1,5 @@
 package com.bawnorton.betterbookshelves.config;
 
-import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -10,6 +9,7 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -41,8 +41,8 @@ public class ConfigManager {
 //                                .tooltip(Text.of("The colour of a generic book in the bookshelf"))
 //                                .binding(Binding.generic(
 //                                        Integer.parseInt("229494", 16),
-//                                        () -> Integer.parseInt(BetterBookshelves.CONFIG.getBookTexture(Config.BookType.BOOK).getHex(), 16),
-//                                        integer -> BetterBookshelves.CONFIG.getBookTexture(Config.BookType.BOOK).setHex(Integer.toHexString(integer))))
+//                                        () -> Integer.parseInt(ConfigManager.getBookTexture(Config.BookType.BOOK).getHex(), 16),
+//                                        integer -> ConfigManager.getBookTexture(Config.BookType.BOOK).setHex(Integer.toHexString(integer))))
 //                                .controller(integerOption -> new IntegerSliderController(integerOption, 0, 0xFFFFFF, 1))
 //                                .build())
 //                        .build())
@@ -58,12 +58,16 @@ public class ConfigManager {
         if (config.textPreview == null) config.textPreview = Config.TextPreview.ON;
         if (config.perBookTexture == null) config.perBookTexture = true;
         if (config.textSize == null) config.textSize = 10;
+        if (config.enchantingTableBookRequirement == null) config.enchantingTableBookRequirement = 3;
         if (config.bookTypeComparatorOutput == null) config.bookTypeComparatorOutput = false;
         if (config.bookTextures == null) config.bookTextures = defaultBookTextures();
         if (config.enchantedTextures == null) config.enchantedTextures = defaultEnchantedTextures();
 
         if (config.textSize > 20) config.textSize = 20;
         if (config.textSize < 5) config.textSize = 5;
+
+        if (config.enchantingTableBookRequirement > ChiseledBookshelfBlockEntity.MAX_BOOKS) config.enchantingTableBookRequirement = ChiseledBookshelfBlockEntity.MAX_BOOKS;
+        if (config.enchantingTableBookRequirement < -1) config.enchantingTableBookRequirement = -1;
 
         // validate book textures
         List<Config.BookTexture> bookTextures = new ArrayList<>();
@@ -89,7 +93,7 @@ public class ConfigManager {
             if (enchantedTexture == null) {
                 enchantedTexture = Config.EnchantedTexture.of(enchantment);
             }
-            if (enchantedTexture.model < 0 || enchantedTexture.model > 5) enchantedTexture.model = 0;
+            if (enchantedTexture.getModel() < -1 || enchantedTexture.getModel() > 5) enchantedTexture.setModel(-1);
             try {
                 String hex = enchantedTexture.getHex();
                 if (!hex.equals("inherit")) Integer.parseInt(hex, 16);
@@ -100,9 +104,9 @@ public class ConfigManager {
         }
         config.enchantedTextures = enchantedTextures;
 
-        BetterBookshelves.CONFIG = config;
+        Config.update(config);
         save();
-        LOGGER.info("Loaded config: " + config);
+        LOGGER.info("Loaded config");
     }
 
     private static List<Config.BookTexture> defaultBookTextures() {
@@ -124,7 +128,7 @@ public class ConfigManager {
     }
 
     public static Config.BookTexture getBookTexture(Config.BookType type) {
-        for (Config.BookTexture bookTexture : BetterBookshelves.CONFIG.bookTextures) {
+        for (Config.BookTexture bookTexture : Config.getInstance().bookTextures) {
             if (bookTexture.type.equals(type)) {
                 return bookTexture;
             }
@@ -148,7 +152,7 @@ public class ConfigManager {
 
 
     public static Config.EnchantedTexture getEnchantedTexture(String enchantment) {
-        for (Config.EnchantedTexture enchantedTexture : BetterBookshelves.CONFIG.enchantedTextures) {
+        for (Config.EnchantedTexture enchantedTexture : Config.getInstance().enchantedTextures) {
             if (enchantedTexture.enchantement.equals(enchantment)) {
                 return enchantedTexture;
             }
@@ -157,7 +161,7 @@ public class ConfigManager {
     }
 
     private static Config load() {
-        Config config = new Config();
+        Config config = Config.getInstance();
         try {
             if (!Files.exists(configPath)) {
                 Files.createDirectories(configPath.getParent());
@@ -178,7 +182,7 @@ public class ConfigManager {
 
     private static void save() {
         try {
-            Files.write(configPath, GSON.toJson(BetterBookshelves.CONFIG).getBytes());
+            Files.write(configPath, GSON.toJson(Config.getInstance()).getBytes());
         } catch (IOException e) {
             LOGGER.error("Failed to save config", e);
         }

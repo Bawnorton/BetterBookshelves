@@ -31,7 +31,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
 
     @Override
     public void render(ChiseledBookshelfBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if(BetterBookshelves.CONFIG.textPreview != Config.TextPreview.ON) return;
+        if(Config.getInstance().textPreview != Config.TextPreview.ON) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         BlockState state = entity.getCachedState();
@@ -43,7 +43,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
         Direction rotation = state.get(Properties.HORIZONTAL_FACING);
         TextRenderer textRenderer = client.textRenderer;
         List<Text> displayText = Helper.getBookText(stack);
-        int textSize = BetterBookshelves.CONFIG.textSize;
+        int textSize = Config.getInstance().textSize;
 
         matrices.push();
         matrices.translate(0.5, 0.5, 0.5);

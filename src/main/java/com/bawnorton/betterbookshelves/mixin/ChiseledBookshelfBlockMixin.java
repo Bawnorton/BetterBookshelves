@@ -1,6 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.BetterBookshelves;
+import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.state.property.BetterBookshelvesProperties;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,7 +29,7 @@ public abstract class ChiseledBookshelfBlockMixin {
 
     @Inject(method = "getComparatorOutput", at = @At("RETURN"), cancellable = true)
     private void getComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-        if(BetterBookshelves.CONFIG.bookTypeComparatorOutput) {
+        if(Config.getInstance().bookTypeComparatorOutput) {
             cir.setReturnValue(state.get(BetterBookshelvesProperties.LAST_BOOK_TYPE));
         }
     }

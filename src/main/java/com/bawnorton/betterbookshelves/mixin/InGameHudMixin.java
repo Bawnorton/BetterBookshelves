@@ -29,7 +29,7 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0))
     private void renderCrosshair(MatrixStack matrices, CallbackInfo ci) {
-        if(BetterBookshelves.CONFIG.textPreview != Config.TextPreview.UNDER_CROSSHAIR) return;
+        if(Config.getInstance().textPreview != Config.TextPreview.UNDER_CROSSHAIR) return;
         MinecraftClient client = MinecraftClient.getInstance();
 
         ItemStack book = Helper.getLookingAtBook(null).getRight();
