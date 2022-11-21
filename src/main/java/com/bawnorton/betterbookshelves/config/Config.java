@@ -179,7 +179,7 @@ public class Config {
         @SerializedName("minecraft:book") BOOK("3E9293", 0),
         @SerializedName("minecraft:written_book") WRITTEN_BOOK("C8335B", 3),
         @SerializedName("minecraft:writable_book") WRITABLE_BOOK("749B48", 1),
-        @SerializedName("minecraft:enchanted_book") ENCHANTED_BOOK("651A96", 2);
+        @SerializedName("minecraft:enchanted_book") ENCHANTED_BOOK("9420DF", 2);
 
         private final String hexColor;
         private final int model;
