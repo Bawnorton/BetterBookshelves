@@ -19,12 +19,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ChiseledBookshelfBlockMixin {
     @ModifyVariable(method = "<init>", at = @At("STORE"), ordinal = 0)
     private BlockState init(BlockState state) {
-        return state.with(BetterBookshelvesProperties.LAST_BOOK_TYPE, 0);
+        return state.with(BetterBookshelvesProperties.LAST_BOOK_TYPE, 0).with(BetterBookshelvesProperties.LAST_INTERACTION_BOOK_SLOT, 0);
     }
 
-    @Inject(method = "appendProperties", at = @At(value = "INVOKE", target = "Lnet/minecraft/state/StateManager$Builder;add([Lnet/minecraft/state/property/Property;)Lnet/minecraft/state/StateManager$Builder;", ordinal = 1, shift = At.Shift.AFTER))
+    @Inject(method = "appendProperties", at = @At(value = "INVOKE", target = "Lnet/minecraft/state/StateManager$Builder;add([Lnet/minecraft/state/property/Property;)Lnet/minecraft/state/StateManager$Builder;", shift = At.Shift.AFTER))
     private void appendProperties(StateManager.Builder<Block, BlockState> builder, CallbackInfo ci) {
         builder.add(BetterBookshelvesProperties.LAST_BOOK_TYPE);
+        builder.add(BetterBookshelvesProperties.LAST_INTERACTION_BOOK_SLOT);
     }
 
     @Inject(method = "getComparatorOutput", at = @At("RETURN"), cancellable = true)

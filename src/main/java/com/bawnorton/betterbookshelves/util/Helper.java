@@ -1,5 +1,7 @@
 package com.bawnorton.betterbookshelves.util;
 
+import com.bawnorton.betterbookshelves.BetterBookshelves;
+import com.bawnorton.betterbookshelves.client.BetterBookshelvesClient;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -69,11 +72,10 @@ public abstract class Helper {
     }
 
     public static List<ItemStack> getInventory(ChiseledBookshelfBlockEntity instance) {
-        List<ItemStack> inventory = new ArrayList<>();
-        for(int i = 0; i < instance.size(); i++) {
-            inventory.add(instance.getStack(i));
-        }
-        return inventory;
+        List<ItemStack> cachedStack = BetterBookshelvesClient.lastBooks.get(instance.getPos());
+        if(cachedStack != null) return cachedStack;
+        BetterBookshelves.LOGGER.warn("No cached inventory found for " + instance.getPos() + ", may be rendering incorrect books!");
+        return DefaultedList.ofSize(6, ItemStack.EMPTY);
     }
 
     private static Book getBook(ChiseledBookshelfBlockEntity entity) {

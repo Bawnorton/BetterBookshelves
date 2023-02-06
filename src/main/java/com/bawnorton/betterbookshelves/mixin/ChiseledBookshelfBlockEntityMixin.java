@@ -6,12 +6,15 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 
@@ -29,6 +32,16 @@ public abstract class ChiseledBookshelfBlockEntityMixin {
             case "written_book" -> 3;
             case "enchanted_book" -> 4;
             default -> 0;
-        });
+        }).with(BetterBookshelvesProperties.LAST_INTERACTION_BOOK_SLOT, interactedSlot);
+    }
+
+    @Inject(method = "readNbt", at = @At("RETURN"))
+    private void readNbt(NbtCompound nbt, CallbackInfo ci) {
+        BetterBookshelvesClient.lastBooks.put(((ChiseledBookshelfBlockEntity)(Object) this).getPos(), new ArrayList<>(){{for(int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) add(inventory.get(i));}});
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void init(CallbackInfo ci) {
+        BetterBookshelvesClient.lastBooks.put(((ChiseledBookshelfBlockEntity)(Object) this).getPos(), new ArrayList<>(){{for(int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) add(inventory.get(i));}});
     }
 }

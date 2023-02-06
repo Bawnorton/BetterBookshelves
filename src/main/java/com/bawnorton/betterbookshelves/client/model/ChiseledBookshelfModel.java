@@ -1,5 +1,6 @@
 package com.bawnorton.betterbookshelves.client.model;
 
+import com.bawnorton.betterbookshelves.BetterBookshelves;
 import com.bawnorton.betterbookshelves.client.BetterBookshelvesClient;
 import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.config.ConfigManager;
@@ -221,7 +222,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         for(int i = 0; i < inventory.size(); i++) {
             if(state.get(slotProperties.get(i))) {
                 Item item = inventory.get(i).getItem();
-                if (item == Items.AIR || i == state.get(Properties.LAST_INTERACTION_BOOK_SLOT) - 1) {
+                if (item == Items.AIR || i == state.get(BetterBookshelvesProperties.LAST_INTERACTION_BOOK_SLOT)) {
                     item = switch (state.get(BetterBookshelvesProperties.LAST_BOOK_TYPE)) {
                         case 1 -> Items.BOOK;
                         case 2 -> Items.WRITABLE_BOOK;
@@ -229,6 +230,10 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                         case 4 -> Items.ENCHANTED_BOOK;
                         default -> Items.AIR;
                     };
+                }
+                if(item.equals(Items.AIR)) {
+                    BetterBookshelves.LOGGER.warn("Item is air, skipping");
+                    continue;
                 }
 
                 if (Config.getInstance().perBookTexture) {
