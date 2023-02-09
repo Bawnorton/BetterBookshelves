@@ -9,7 +9,9 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
@@ -21,6 +23,7 @@ import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -40,6 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
+import static com.bawnorton.betterbookshelves.BetterBookshelvesClient.LOGGER;
 
 public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricBakedModel {
     private static final SpriteIdentifier[] SPRITE_IDS = new SpriteIdentifier[]{
@@ -127,30 +131,42 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         return false;
     }
 
-    private BookModel getModel(ItemStack book) {
+    private BookModel getModel(Item book) {
         if(Config.getInstance().perBookTexture) {
-            return BookModel.of(ConfigManager.getBookTexture(book.getItem()).model);
+            return BookModel.of(ConfigManager.getBookTexture(book).model);
         }
         return BookModel.NONE;
     }
 
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
+        RenderAttachedBlockView renderAttachedBlockView = (RenderAttachedBlockView) blockView;
+
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         if(renderer == null) return;
         BlockEntity blockEntity = blockView.getBlockEntity(pos);
-        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) return;
+        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity)) return;
+
+        List<ItemStack> inventory = (List<ItemStack>) renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
+        if(inventory == null) {
+            LOGGER.info("Inventory is null, skipping render");
+            return;
+        }
 
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_empty"), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
         emitter.emit();
 
+        LOGGER.info("Rendering " + inventory + " books");
         for(int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) {
-            ItemStack stack = chiseledBookshelfBlockEntity.getStack(i);
-            BookModel bookModel = getModel(stack);
+            ItemStack stack = inventory.get(i);
+            Item item = stack.getItem();
+            if(item == Items.AIR) continue;
+
+            BookModel bookModel = getModel(item);
             if(bookModel == BookModel.NONE) {
                 emitter.square(facing, 0, 0, 1, 1, 0);
                 emitter.spriteBake(0, SPRITES.get("default_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
@@ -159,9 +175,9 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                 emitter.emit();
                 continue;
             }
-            Item book = stack.getItem();
-            int model = ConfigManager.getBookTexture(book).model;
-            int decimal = ConfigManager.getBookTexture(book).getDecimal() - 0xFFFFFF - 1;
+
+            int model = ConfigManager.getBookTexture(item).model;
+            int decimal = ConfigManager.getBookTexture(item).getDecimal() - 0xFFFFFF - 1;
             if(bookModel == BookModel.ENCHANTED_BOOK) {
                 NbtList enchantmentNbt = EnchantedBookItem.getEnchantmentNbt(stack);
                 if(enchantmentNbt.isEmpty()) continue;
@@ -237,7 +253,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                 for(NbtElement item: items) {
                     emitter.square(Direction.NORTH, 0, 0, 1, 1, 0);
                     String nbtString = item.asString();
-                    int slot = 5 - Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
+                    int slot = Integer.parseInt(nbtString.substring(nbtString.indexOf("Slot:") + 5, nbtString.indexOf("b,id")));
                     String type = nbtString.substring(nbtString.indexOf("minecraft:") + 10, nbtString.indexOf("\"", nbtString.indexOf("minecraft:") + 10));
                     Config.BookType bookType = switch (type) {
                         case "writable_book" -> Config.BookType.WRITABLE_BOOK;
@@ -298,7 +314,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
 
     @Override
     public boolean useAmbientOcclusion() {
-        return false;
+        return true;
     }
 
     @Override
@@ -323,12 +339,12 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
 
     @Override
     public ModelTransformation getTransformation() {
-        return null;
+        return ModelHelper.MODEL_TRANSFORM_BLOCK;
     }
 
     @Override
     public ModelOverrideList getOverrides() {
-        return null;
+        return ModelOverrideList.EMPTY;
     }
 
     @Override

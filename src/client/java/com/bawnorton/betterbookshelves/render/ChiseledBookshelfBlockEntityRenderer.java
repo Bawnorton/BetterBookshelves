@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -28,10 +29,7 @@ import java.util.List;
 public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer<ChiseledBookshelfBlockEntity> {
     public ChiseledBookshelfBlockEntityRenderer() {}
 
-    @Override
-    public void render(ChiseledBookshelfBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if(Config.getInstance().textPreview != Config.TextPreview.ON) return;
-
+    private void renderText(ChiseledBookshelfBlockEntity entity, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         MinecraftClient client = MinecraftClient.getInstance();
         BlockState state = entity.getCachedState();
         Pair<Book, ItemStack> book = PlayerLookHelper.getLookingAtBook(entity);
@@ -60,5 +58,10 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
             y += 10;
         }
         matrices.pop();
+    }
+
+    @Override
+    public void render(ChiseledBookshelfBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        if(Config.getInstance().textPreview == Config.TextPreview.ON) renderText(entity, matrices, vertexConsumers);
     }
 }
