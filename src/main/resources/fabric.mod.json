@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "betterbookshelves",
+  "version": "${version}",
+
+  "name": "Better Bookshelves",
+  "description": "This is a mod that makes Chiseled Bookshelves in Minecraft more useful.",
+  "authors": [
+    "Bawnorton"
+  ],
+  "contact": {
+    "homepage": "https://bawnorton.com",
+    "sources": "https://github.com/Benjamin-Norton/BetterBookshelves",
+    "issues": "https://github.com/Benjamin-Norton/BetterBookshelves/issues"
+  },
+
+  "license": "MIT",
+  "icon": "assets/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.bawnorton.betterbookshelves.BetterBookshelvesClient"
+    ],
+    "main": [
+      "com.bawnorton.betterbookshelves.BetterBookshelves"
+    ]
+  },
+  "mixins": [
+    "betterbookshelves.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "modmenu": ">=6.0.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/jEGF5fb"
+      }
+    }
+  }
+}
