@@ -3,8 +3,7 @@
 	"package": "com.bawnorton.betterbookshelves.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-		"InGameHudMixin",
-		"ChiseledBlockEntityMixin"
+		"InGameHudMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

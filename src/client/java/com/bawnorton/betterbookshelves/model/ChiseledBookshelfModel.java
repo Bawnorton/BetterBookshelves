@@ -131,13 +131,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         return false;
     }
 
-    private BookModel getModel(Item book) {
-        if(Config.getInstance().perBookTexture) {
-            return BookModel.of(ConfigManager.getBookTexture(book).model);
-        }
-        return BookModel.NONE;
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
         RenderAttachedBlockView renderAttachedBlockView = (RenderAttachedBlockView) blockView;
@@ -166,8 +160,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             Item item = stack.getItem();
             if(item == Items.AIR) continue;
 
-            BookModel bookModel = getModel(item);
-            if(bookModel == BookModel.NONE) {
+            if(!Config.getInstance().perBookTexture) {
                 emitter.square(facing, 0, 0, 1, 1, 0);
                 emitter.spriteBake(0, SPRITES.get("default_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
                 emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
@@ -175,10 +168,11 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                 emitter.emit();
                 continue;
             }
+            Config.BookTexture texture = ConfigManager.getBookTexture(item);
 
-            int model = ConfigManager.getBookTexture(item).model;
-            int decimal = ConfigManager.getBookTexture(item).getDecimal() - 0xFFFFFF - 1;
-            if(bookModel == BookModel.ENCHANTED_BOOK) {
+            int model = texture.model;
+            int decimal = texture.getDecimal() - 0xFFFFFF - 1;
+            if(texture.type == Config.BookType.ENCHANTED_BOOK) {
                 NbtList enchantmentNbt = EnchantedBookItem.getEnchantmentNbt(stack);
                 if(enchantmentNbt.isEmpty()) continue;
                 NbtElement first = enchantmentNbt.get(0);
@@ -196,7 +190,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             emitter.spriteColor(0, decimal, decimal, decimal, decimal);
             emitter.emit();
 
-            if(bookModel != BookModel.ENCHANTED_BOOK) {
+            if(texture.type != Config.BookType.ENCHANTED_BOOK) {
                 emitter.square(facing, 0, 0, 1, 1, 0);
                 emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (i + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
                 emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
@@ -369,27 +363,5 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         if(renderer == null) return this;
         mesh = renderer.meshBuilder().build();
         return this;
-    }
-
-    private enum BookModel {
-        NONE(-1),
-        BOOK(1),
-        WRITABLE_BOOK(2),
-        WRITTEN_BOOK(3),
-        ENCHANTED_BOOK(4);
-
-        private final int model;
-
-        BookModel(int model) {
-            this.model = model;
-        }
-
-        public static BookModel of(Integer model) {
-            if(model == null) return NONE;
-            for(BookModel bookModel : values()) {
-                if(bookModel.model == model) return bookModel;
-            }
-            return NONE;
-        }
     }
 }
