@@ -1,5 +1,6 @@
 package com.bawnorton.betterbookshelves.model;
 
+import com.bawnorton.betterbookshelves.BetterBookshelvesClient;
 import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.config.ConfigManager;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -131,30 +132,23 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
-        RenderAttachedBlockView renderAttachedBlockView = (RenderAttachedBlockView) blockView;
-
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         QuadEmitter emitter = context.getEmitter();
         Direction facing = state.get(Properties.HORIZONTAL_FACING);
         if(renderer == null) return;
-        BlockEntity blockEntity = blockView.getBlockEntity(pos);
-        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity)) return;
 
-        List<ItemStack> inventory = (List<ItemStack>) renderAttachedBlockView.getBlockEntityRenderAttachment(pos);
-        if(inventory == null) {
-            LOGGER.info("Inventory is null, skipping render");
-            return;
-        }
+        BlockEntity blockEntity = blockView.getBlockEntity(pos);
+        if(!(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity)) return;
+
+        List<ItemStack> inventory = chiseledBookshelfBlockEntity.inventory;
 
         emitter.square(facing, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_empty"), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
         emitter.emit();
 
-        LOGGER.info("Rendering " + inventory + " books");
         for(int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) {
             ItemStack stack = inventory.get(i);
             Item item = stack.getItem();
@@ -209,6 +203,16 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             }
         }
         context.meshConsumer().accept(mesh);
+    }
+
+    private ItemStack getItemStackFromType(int type) {
+        return switch(type) {
+            case 1 -> new ItemStack(Items.BOOK);
+            case 2 -> new ItemStack(Items.WRITABLE_BOOK);
+            case 3 -> new ItemStack(Items.WRITTEN_BOOK);
+            case 4 -> new ItemStack(Items.ENCHANTED_BOOK);
+            default -> new ItemStack(Items.AIR);
+        };
     }
 
     @Override

@@ -21,6 +21,7 @@ repositories {
 }
 
 loom {
+	accessWidenerPath = file("src/main/resources/betterbookshelves.accesswidener")
     splitEnvironmentSourceSets()
 
     mods {

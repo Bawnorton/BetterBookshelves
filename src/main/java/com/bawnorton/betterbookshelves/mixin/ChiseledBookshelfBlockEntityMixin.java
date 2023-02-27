@@ -1,6 +1,7 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
+import com.bawnorton.betterbookshelves.networking.Networking;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -14,27 +15,17 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ChiseledBookshelfBlockEntity.class)
-public abstract class ChiseledBookshelfBlockEntityMixin extends BlockEntity implements RenderAttachmentBlockEntity {
-    @Shadow @Final private DefaultedList<ItemStack> inventory;
+public abstract class ChiseledBookshelfBlockEntityMixin extends BlockEntity {
     @Shadow private int lastInteractedSlot;
+    @Shadow @Final public DefaultedList<ItemStack> inventory;
 
     public ChiseledBookshelfBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-    }
-
-    @Override
-    public @Nullable Object getRenderAttachmentData() {
-        return inventory;
     }
 
     @Nullable
@@ -47,6 +38,7 @@ public abstract class ChiseledBookshelfBlockEntityMixin extends BlockEntity impl
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = Inventories.writeNbt(new NbtCompound(), inventory, true);
         nbt.putInt("last_interacted_slot", lastInteractedSlot);
+        Networking.sendUpdatePacket(pos);
         return nbt;
     }
 }

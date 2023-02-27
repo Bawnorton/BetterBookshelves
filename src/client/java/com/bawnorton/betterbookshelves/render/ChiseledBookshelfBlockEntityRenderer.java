@@ -1,15 +1,16 @@
 package com.bawnorton.betterbookshelves.render;
 
-import com.bawnorton.betterbookshelves.util.Book;
+import com.bawnorton.betterbookshelves.BetterBookshelvesClient;
 import com.bawnorton.betterbookshelves.config.Config;
+import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.util.PlayerLookHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -54,7 +55,7 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
         int y = 0;
         for(Text text: displayText) {
             float h = (float)(-textRenderer.getWidth(text) / 2);
-            textRenderer.draw(text, h, y, stack.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215, false, matrix4f, vertexConsumers, true, j, 15728880);
+            textRenderer.draw(text, h, y, stack.getItem() == Items.ENCHANTED_BOOK ? 16777045 : 16777215, false, matrix4f, vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, j, 15728880);
             y += 10;
         }
         matrices.pop();

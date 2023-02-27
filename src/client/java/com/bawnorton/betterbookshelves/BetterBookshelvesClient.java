@@ -1,6 +1,7 @@
 package com.bawnorton.betterbookshelves;
 
 import com.bawnorton.betterbookshelves.config.ConfigManager;
+import com.bawnorton.betterbookshelves.networking.client.Networking;
 import com.bawnorton.betterbookshelves.render.BetterBookshelvesModelProvider;
 import com.bawnorton.betterbookshelves.render.ChiseledBookshelfBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
@@ -17,6 +18,8 @@ public class BetterBookshelvesClient implements ClientModInitializer {
 	@Override
 	@SuppressWarnings("deprecation")
 	public void onInitializeClient() {
+		Networking.init();
+
 		ModelLoadingRegistry.INSTANCE.registerResourceProvider(manager -> new BetterBookshelvesModelProvider());
 		BlockEntityRendererRegistry.register(BlockEntityType.CHISELED_BOOKSHELF, context -> new ChiseledBookshelfBlockEntityRenderer());
 

@@ -29,7 +29,7 @@
   "mixins": [
     "betterbookshelves.mixins.json"
   ],
-
+  "accessWidener": "betterbookshelves.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric": "*",

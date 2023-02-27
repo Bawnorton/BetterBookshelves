@@ -1,0 +1,3 @@
+accessWidener	v1	named
+accessible method net/minecraft/block/entity/ChiseledBookshelfBlockEntity writeNbt (Lnet/minecraft/nbt/NbtCompound;)V
+accessible field net/minecraft/block/entity/ChiseledBookshelfBlockEntity inventory Lnet/minecraft/util/collection/DefaultedList;

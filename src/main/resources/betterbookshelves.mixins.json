@@ -5,7 +5,8 @@
 	"mixins": [
 		"ChiseledBookshelfBlockEntityMixin",
 		"ChiseledBookshelfBlockMixin",
-		"EnchantingTableBlockMixin"
+		"EnchantingTableBlockMixin",
+		"MinecraftServerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
