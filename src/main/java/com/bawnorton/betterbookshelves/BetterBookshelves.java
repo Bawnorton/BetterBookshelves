@@ -12,5 +12,6 @@ public class BetterBookshelves implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		LOGGER.info("BetterBookshelves Initialized");
 	}
 }
