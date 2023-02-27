@@ -1,8 +1,6 @@
 package com.bawnorton.betterbookshelves;
 
-import com.bawnorton.betterbookshelves.config.ServerConfigManager;
 import net.fabricmc.api.ModInitializer;
-
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +12,5 @@ public class BetterBookshelves implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ServerConfigManager.loadConfig();
 	}
 }

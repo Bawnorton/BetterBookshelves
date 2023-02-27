@@ -1,6 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.config.ServerConfig;
+import com.bawnorton.betterbookshelves.config.Config;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChiseledBookshelfBlock;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
@@ -16,7 +16,7 @@ public abstract class ChiseledBookshelfBlockMixin {
 
     @Inject(method = "getComparatorOutput", at = @At("RETURN"), cancellable = true)
     private void getComparatorOutput(BlockState state, World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-        if(ServerConfig.getInstance().bookTypeComparatorOutput) {
+        if(Config.getInstance().bookTypeComparatorOutput) {
             if(world.getBlockEntity(pos) instanceof ChiseledBookshelfBlockEntity blockEntity) {
                 int slot = blockEntity.getLastInteractedSlot();
                 cir.setReturnValue(switch(blockEntity.getStack(slot).getItem().toString()) {

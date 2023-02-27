@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
@@ -24,34 +22,14 @@ public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path configPath = FabricLoader.getInstance().getConfigDir().resolve("betterbookshelves.json");
 
-    public static Screen createGui(Screen parent) {
-//        return YetAnotherConfigLib.createBuilder()
-//                .title(Text.of("Better Bookshelves"))
-//                .category(ConfigCategory.createBuilder()
-//                        .name(Text.of("General"))
-//                        .tooltip(Text.of("General settings"))
-//                        .option(Option.createBuilder(int.class)
-//                                .name(Text.of("Book Colour"))
-//                                .tooltip(Text.of("The colour of a generic book in the bookshelf"))
-//                                .binding(Binding.generic(
-//                                        Integer.parseInt("229494", 16),
-//                                        () -> Integer.parseInt(ConfigManager.getBookTexture(Config.BookType.BOOK).getHex(), 16),
-//                                        integer -> ConfigManager.getBookTexture(Config.BookType.BOOK).setHex(Integer.toHexString(integer))))
-//                                .controller(integerOption -> new IntegerSliderController(integerOption, 0, 0xFFFFFF, 1))
-//                                .build())
-//                        .build())
-//                .save(ConfigManager::save)
-//                .build()
-//                .generateScreen(parent);
-        return parent;
-    }
-
     public static void loadConfig() {
         Config config = load();
         // Set config values and repair if needed
         if (config.textPreview == null) config.textPreview = Config.TextPreview.ON;
         if (config.perBookTexture == null) config.perBookTexture = true;
         if (config.textSize == null) config.textSize = 10;
+        if (config.enchantingTableBookRequirement == null) config.enchantingTableBookRequirement = 3;
+        if (config.bookTypeComparatorOutput == null) config.bookTypeComparatorOutput = false;
         if (config.bookTextures == null) config.bookTextures = defaultBookTextures();
         if (config.enchantedTextures == null) config.enchantedTextures = defaultEnchantedTextures();
 

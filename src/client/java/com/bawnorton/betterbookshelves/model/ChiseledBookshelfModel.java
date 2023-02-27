@@ -1,6 +1,5 @@
 package com.bawnorton.betterbookshelves.model;
 
-import com.bawnorton.betterbookshelves.BetterBookshelvesClient;
 import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.config.ConfigManager;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -12,7 +11,6 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
@@ -44,7 +42,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static net.fabricmc.fabric.api.renderer.v1.material.BlendMode.CUTOUT_MIPPED;
-import static com.bawnorton.betterbookshelves.BetterBookshelvesClient.LOGGER;
 
 public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricBakedModel {
     private static final SpriteIdentifier[] SPRITE_IDS = new SpriteIdentifier[]{

@@ -1,12 +1,10 @@
 package com.bawnorton.betterbookshelves.render;
 
-import com.bawnorton.betterbookshelves.BetterBookshelvesClient;
 import com.bawnorton.betterbookshelves.config.Config;
 import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.util.PlayerLookHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.client.MinecraftClient;

@@ -36,6 +36,10 @@ public class Config {
     public Boolean bookTypeComparatorOutput = false;
 
     @Expose
+    @SerializedName("enchanting_table_book_requirement")
+    public Integer enchantingTableBookRequirement = 3;
+
+    @Expose
     @SerializedName("book_textures")
     public List<BookTexture> bookTextures = new ArrayList<>();
 
@@ -90,10 +94,6 @@ public class Config {
             this.hex = toHexString.startsWith("#") ? toHexString.substring(1) : hex;
         }
 
-        public void setDecimal(int decimal) {
-            setHex("#" + Integer.toHexString(decimal));
-        }
-
         @Override
         public String toString() {
             return "BookTexture{" +
@@ -138,10 +138,6 @@ public class Config {
                 throw new IllegalArgumentException("Invalid hex color: " + toHexString);
             }
             this.hex = toHexString.startsWith("#") ? toHexString.substring(1) : toHexString;
-        }
-
-        public void setDecimal(int decimal) {
-            setHex("#" + Integer.toHexString(decimal));
         }
 
         public int getModel() {
