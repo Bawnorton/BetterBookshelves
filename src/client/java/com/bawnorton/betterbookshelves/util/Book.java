@@ -17,20 +17,7 @@ public enum Book {
         this.y2 = y2;
     }
 
-    public int getSlot() {
-        return this == NONE ? -1 : this.ordinal();
-    }
-
-    public boolean isWithin(int x, int y) {
-        return x >= x1 && x <= x2 && y >= y2 && y <= y1;
-    }
-
-    public static Book getBook(int x, int y) {
-        for (Book box : Book.values()) {
-            if (box.isWithin(x, y)) {
-                return box;
-            }
-        }
-        return NONE;
+    public static Book getBook(int slot) {
+        return slot < 0 || slot >= values().length ? NONE : values()[slot];
     }
 }
