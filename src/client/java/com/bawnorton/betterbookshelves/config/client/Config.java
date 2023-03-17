@@ -1,4 +1,4 @@
-package com.bawnorton.betterbookshelves.config;
+package com.bawnorton.betterbookshelves.config.client;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -32,14 +32,6 @@ public class Config {
     public Integer textSize = 10;
 
     @Expose
-    @SerializedName("book_type_comparator_output")
-    public Boolean bookTypeComparatorOutput = false;
-
-    @Expose
-    @SerializedName("enchanting_table_book_requirement")
-    public Integer enchantingTableBookRequirement = 3;
-
-    @Expose
     @SerializedName("book_textures")
     public List<BookTexture> bookTextures = new ArrayList<>();
 
@@ -49,11 +41,10 @@ public class Config {
 
     @Override
     public String toString() {
-        return "Config{" +
+        return "ServerConfig{" +
                 "perBookTexture=" + perBookTexture +
                 ", textPreview=" + textPreview +
                 ", textSize=" + textSize +
-                ", bookTypeComparatorOutput=" + bookTypeComparatorOutput +
                 ", bookTextures=" + bookTextures +
                 ", enchantedTextures=" + enchantedTextures +
                 '}';

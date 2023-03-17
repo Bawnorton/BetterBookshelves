@@ -1,15 +1,24 @@
-package com.bawnorton.betterbookshelves.config;
+package com.bawnorton.betterbookshelves.config.client;
 
+import com.bawnorton.betterbookshelves.BetterBookshelves;
+import com.bawnorton.betterbookshelves.compat.yacl.YACLImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
+import net.minecraft.screen.ScreenTexts;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,8 +37,6 @@ public class ConfigManager {
         if (config.textPreview == null) config.textPreview = Config.TextPreview.ON;
         if (config.perBookTexture == null) config.perBookTexture = true;
         if (config.textSize == null) config.textSize = 10;
-        if (config.enchantingTableBookRequirement == null) config.enchantingTableBookRequirement = 3;
-        if (config.bookTypeComparatorOutput == null) config.bookTypeComparatorOutput = false;
         if (config.bookTextures == null) config.bookTextures = defaultBookTextures();
         if (config.enchantedTextures == null) config.enchantedTextures = defaultEnchantedTextures();
 
@@ -153,5 +160,36 @@ public class ConfigManager {
         } catch (IOException e) {
             LOGGER.error("Failed to save config", e);
         }
+    }
+
+    public static void saveConfig() {
+        save();
+        LOGGER.info("Saved client config");
+    }
+
+    public static Screen getConfigScreen() {
+        if(!FabricLoader.getInstance().isModLoaded("yet-another-config-lib")) {
+            return new ConfirmScreen((result) -> {
+                if (result) {
+                    Util.getOperatingSystem().open(URI.create("https://www.curseforge.com/minecraft/mc-mods/yacl/files"));
+                }
+                MinecraftClient.getInstance().setScreen(null);
+            }, Text.of("Yet Another Config Lib not installed!"), Text.of("YACL is required to edit the config in game, would you like to install YACL?"), ScreenTexts.YES, ScreenTexts.NO);
+        } else {
+            String versionString = FabricLoader.getInstance().getModContainer("yet-another-config-lib").get().getMetadata().getVersion().getFriendlyString();
+            int major = Integer.parseInt(versionString.split("\\.")[0]);
+            int minor = Integer.parseInt(versionString.split("\\.")[1]);
+            int patch = Integer.parseInt(versionString.split("\\.")[2]);
+            if (major < 2 || (major == 2 && minor < 3) || (major == 2 && minor == 3 && patch < 0)) {
+                return new ConfirmScreen((result) -> {
+                    if (result) {
+                        Util.getOperatingSystem().open(URI.create("https://www.curseforge.com/minecraft/mc-mods/yacl/files"));
+                    }
+                    MinecraftClient.getInstance().setScreen(null);
+                }, Text.of("YACL version is '%s' not compatible with this mod".formatted(versionString)), Text.of("YACL version 2.3.0 or higher is required to edit the config in game, would you like to update YACL?"), ScreenTexts.YES, ScreenTexts.NO);
+            }
+
+        }
+        return YACLImpl.getScreen();
     }
 }

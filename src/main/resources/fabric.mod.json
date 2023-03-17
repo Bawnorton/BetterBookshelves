@@ -24,6 +24,9 @@
     ],
     "main": [
       "com.bawnorton.betterbookshelves.BetterBookshelves"
+    ],
+    "modmenu": [
+      "com.bawnorton.betterbookshelves.compat.modmenu.BetterBookshelvesModMenuApiImpl"
     ]
   },
   "mixins": [

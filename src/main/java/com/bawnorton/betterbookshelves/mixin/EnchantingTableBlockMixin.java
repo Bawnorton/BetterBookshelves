@@ -1,6 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.config.Config;
+import com.bawnorton.betterbookshelves.config.ServerConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
@@ -20,7 +20,7 @@ public abstract class EnchantingTableBlockMixin {
 
     @Inject(method = "canAccessBookshelf", at = @At("RETURN"), cancellable = true)
     private static void canAccessBookshelf(World world, BlockPos tablePos, BlockPos bookshelfOffset, CallbackInfoReturnable<Boolean> cir) {
-        if (Config.getInstance().enchantingTableBookRequirement == -1) return;
+        if (ServerConfig.getInstance().enchantingTableBookRequirement == -1) return;
         if(cir.getReturnValueZ()) return;
         BlockState blockState = world.getBlockState(tablePos.add(bookshelfOffset));
         boolean isChiseledBookshelf = blockState.isOf(Blocks.CHISELED_BOOKSHELF) && world.isAir(tablePos.add(bookshelfOffset.getX() / 2, bookshelfOffset.getY(), bookshelfOffset.getZ() / 2));
@@ -40,7 +40,7 @@ public abstract class EnchantingTableBlockMixin {
             BlockEntity blockEntity = world.getBlockEntity(chiseledBookshelfPos);
             if(blockEntity instanceof ChiseledBookshelfBlockEntity chiseledBookshelfBlockEntity) {
                 int numBooks = chiseledBookshelfBlockEntity.getOpenSlotCount();
-                boolean hasEnoughBooks = numBooks >= Config.getInstance().enchantingTableBookRequirement;
+                boolean hasEnoughBooks = numBooks >= ServerConfig.getInstance().enchantingTableBookRequirement;
                 cir.setReturnValue(validFacing && hasEnoughBooks);
             }
         }

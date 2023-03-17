@@ -1,7 +1,7 @@
 package com.bawnorton.betterbookshelves.model;
 
-import com.bawnorton.betterbookshelves.config.Config;
-import com.bawnorton.betterbookshelves.config.ConfigManager;
+import com.bawnorton.betterbookshelves.config.client.Config;
+import com.bawnorton.betterbookshelves.config.client.ConfigManager;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
@@ -181,7 +181,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             emitter.spriteColor(0, decimal, decimal, decimal, decimal);
             emitter.emit();
 
-            if(texture.type != Config.BookType.ENCHANTED_BOOK) {
+            if(model != 2) { // 2 is the model without a band
                 emitter.square(facing, 0, 0, 1, 1, 0);
                 emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (i + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
                 emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
@@ -200,16 +200,6 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             }
         }
         context.meshConsumer().accept(mesh);
-    }
-
-    private ItemStack getItemStackFromType(int type) {
-        return switch(type) {
-            case 1 -> new ItemStack(Items.BOOK);
-            case 2 -> new ItemStack(Items.WRITABLE_BOOK);
-            case 3 -> new ItemStack(Items.WRITTEN_BOOK);
-            case 4 -> new ItemStack(Items.ENCHANTED_BOOK);
-            default -> new ItemStack(Items.AIR);
-        };
     }
 
     @Override
@@ -289,7 +279,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                             String enchant = matcher.group(0);
                             model = ConfigManager.getEnchantedTexture(enchant).getModel();
                         }
-                        if(model != 2) {
+                        if(model != 2) { // 2 is the model without a band
                             emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (slot + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
                             emitter.spriteColor(0, -1, -1, -1, -1);
                             emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());

@@ -1,6 +1,6 @@
 package com.bawnorton.betterbookshelves.render;
 
-import com.bawnorton.betterbookshelves.config.Config;
+import com.bawnorton.betterbookshelves.config.client.Config;
 import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.util.PlayerLookHelper;
 import net.fabricmc.api.EnvType;
