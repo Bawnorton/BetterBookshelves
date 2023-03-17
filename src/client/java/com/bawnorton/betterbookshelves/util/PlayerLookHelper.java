@@ -33,14 +33,13 @@ public abstract class PlayerLookHelper {
         Pair<Book, ItemStack> book = new Pair<>(Book.NONE, ItemStack.EMPTY);
         MinecraftClient client = MinecraftClient.getInstance();
         if (!(client.crosshairTarget instanceof BlockHitResult hit)) return book;
-
         // Get block entity from world if null
         assert client.world != null;
         if (blockEntity == null) {
             Optional<ChiseledBookshelfBlockEntity> blockEntityOptional = client.world.getBlockEntity(hit.getBlockPos(), BlockEntityType.CHISELED_BOOKSHELF);
             if (blockEntityOptional.isEmpty()) return book;
             blockEntity = blockEntityOptional.get();
-        }
+        } else if (!hit.getBlockPos().equals(blockEntity.getPos())) return book;
 
         // Get hit position on the block and the slot
         Optional<Vec2f> hitPos = ChiseledBookshelfBlockInvoker.getHitPos(hit, blockEntity.getCachedState().get(HorizontalFacingBlock.FACING));
