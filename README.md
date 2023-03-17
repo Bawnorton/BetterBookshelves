@@ -17,6 +17,7 @@ This mod is currently in beta. If you find any bugs, please report them on the [
     * Hovering over a book in the Chiseled Bookshelf will display the book's title and relevant NBT data
 
 ### Configuration
+* #### Install [YACL](https://modrinth.com/mod/yacl) and [ModMenu](https://modrinth.com/mod/modmenu) change the config in-game.
 * Enable / Disable Book Labels or have the label render under the crosshair instead of on the bookshelf
     * text_preview: on/off/under_crosshair (default: on)
 * Change the type of book textures used
