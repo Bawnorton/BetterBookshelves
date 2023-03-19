@@ -1,5 +1,6 @@
 package com.bawnorton.betterbookshelves.render;
 
+import com.bawnorton.betterbookshelves.compat.Compat;
 import com.bawnorton.betterbookshelves.config.client.Config;
 import com.bawnorton.betterbookshelves.util.Book;
 import com.bawnorton.betterbookshelves.util.PlayerLookHelper;
@@ -56,6 +57,8 @@ public class ChiseledBookshelfBlockEntityRenderer implements BlockEntityRenderer
 
     @Override
     public void render(ChiseledBookshelfBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (Config.getInstance().textPreview == Config.TextPreview.ON) renderText(entity, matrices, vertexConsumers);
+        if (Config.getInstance().textPreview == Config.TextPreview.ON) {
+            renderText(entity, matrices, vertexConsumers);
+        }
     }
 }

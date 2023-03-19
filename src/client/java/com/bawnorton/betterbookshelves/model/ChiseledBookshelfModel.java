@@ -1,5 +1,7 @@
 package com.bawnorton.betterbookshelves.model;
 
+import com.bawnorton.betterbookshelves.compat.Compat;
+import com.bawnorton.betterbookshelves.compat.client.wanilla.WanillaClientCompat;
 import com.bawnorton.betterbookshelves.config.client.Config;
 import com.bawnorton.betterbookshelves.config.client.ConfigManager;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -26,6 +28,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
@@ -142,7 +145,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         List<ItemStack> inventory = chiseledBookshelfBlockEntity.inventory;
 
         emitter.square(facing, 0, 0, 1, 1, 0);
-        emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_empty"), MutableQuadView.BAKE_LOCK_UV);
+        emitter.spriteBake(0, getEmpty(Registries.BLOCK.getId(state.getBlock())), MutableQuadView.BAKE_LOCK_UV);
         emitter.spriteColor(0, -1, -1, -1, -1);
         emitter.emit();
 
@@ -194,7 +197,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         for(Direction dir: Direction.values()) {
             if(dir != facing) {
                 emitter.square(dir, 0, 0, 1, 1, 0);
-                emitter.spriteBake(0, SPRITES.get(dir != Direction.UP && dir != Direction.DOWN ? "chiseled_bookshelf_side" : "chiseled_bookshelf_top"), MutableQuadView.BAKE_LOCK_UV);
+                emitter.spriteBake(0, (dir != Direction.UP && dir != Direction.DOWN) ? getSide(Registries.BLOCK.getId(state.getBlock())) : getTop(Registries.BLOCK.getId(state.getBlock())), MutableQuadView.BAKE_LOCK_UV);
                 emitter.spriteColor(0, -1, -1, -1, -1);
                 emitter.emit();
             }
@@ -212,19 +215,19 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             switch (dir) {
                 case UP, DOWN -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_top"), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.spriteBake(0, getTop(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
                     emitter.spriteColor(0, -1, -1, -1, -1);
                     emitter.emit();
                 }
                 case EAST, WEST, SOUTH -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_side"), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.spriteBake(0, getSide(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
                     emitter.spriteColor(0, -1, -1, -1, -1);
                     emitter.emit();
                 }
                 case NORTH -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, SPRITES.get("chiseled_bookshelf_empty"), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.spriteBake(0, getEmpty(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
                     emitter.spriteColor(0, -1, -1, -1, -1);
                     emitter.emit();
                 }
@@ -292,6 +295,34 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         context.meshConsumer().accept(mesh);
     }
 
+    private Sprite getEmpty(Identifier id) {
+        if(!Compat.isWanillaLoaded()) return SPRITES.get("chiseled_bookshelf_empty");
+        return getWanillaSprite(id, 0);
+    }
+
+    private Sprite getSide(Identifier id) {
+        if(!Compat.isWanillaLoaded()) {
+            return SPRITES.get("chiseled_bookshelf_side");
+        }
+        return getWanillaSprite(id, 1);
+    }
+
+    private Sprite getTop(Identifier id) {
+        if(!Compat.isWanillaLoaded()) return SPRITES.get("chiseled_bookshelf_top");
+        return getWanillaSprite(id, 2);
+    }
+
+    private Sprite getWanillaSprite(Identifier id, int index) {
+        List<Sprite> sprites = WanillaClientCompat.getBookshelfSprites(id);
+        if(sprites != null) return sprites.get(index);
+        return switch (index) {
+            case 0 -> SPRITES.get("chiseled_bookshelf_empty");
+            case 1 -> SPRITES.get("chiseled_bookshelf_side");
+            case 2 -> SPRITES.get("chiseled_bookshelf_top");
+            default -> throw new IllegalStateException("Unexpected value: " + index);
+        };
+    }
+
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
         return null;
@@ -349,6 +380,9 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             String path = spriteIdentifier.getTextureId().getPath();
             String name = path.substring(path.lastIndexOf('/') + 1);
             SPRITES.put(name, textureGetter.apply(spriteIdentifier));
+        }
+        if(Compat.isWanillaLoaded()) {
+            WanillaClientCompat.buildBookshelfSprites(textureGetter);
         }
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         if(renderer == null) return this;

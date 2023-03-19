@@ -41,6 +41,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+
+	modCompileOnly(fileTree(dir: "libs", include: ["*.jar"]))
 }
 
 processResources {

@@ -1,7 +1,6 @@
 package com.bawnorton.betterbookshelves.mixin;
 
 import com.bawnorton.betterbookshelves.networking.Networking;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;

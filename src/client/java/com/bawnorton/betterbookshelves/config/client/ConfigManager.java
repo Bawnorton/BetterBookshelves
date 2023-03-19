@@ -1,7 +1,7 @@
 package com.bawnorton.betterbookshelves.config.client;
 
-import com.bawnorton.betterbookshelves.BetterBookshelves;
-import com.bawnorton.betterbookshelves.compat.yacl.YACLImpl;
+import com.bawnorton.betterbookshelves.compat.Compat;
+import com.bawnorton.betterbookshelves.compat.client.yacl.YACLImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -78,6 +78,10 @@ public class ConfigManager {
         }
         config.enchantedTextures = enchantedTextures;
 
+        // if wanilla is loaded and text preview is on, set it to under_crosshair as it is not supported
+        if (Compat.isWanillaLoaded() && config.textPreview == Config.TextPreview.ON) {
+            config.textPreview = Config.TextPreview.UNDER_CROSSHAIR;
+        }
         Config.update(config);
         save();
         LOGGER.info("Loaded client config");
@@ -168,7 +172,7 @@ public class ConfigManager {
     }
 
     public static Screen getConfigScreen() {
-        if(!FabricLoader.getInstance().isModLoaded("yet-another-config-lib")) {
+        if(Compat.isYACLLoaded()) {
             return new ConfirmScreen((result) -> {
                 if (result) {
                     Util.getOperatingSystem().open(URI.create("https://www.curseforge.com/minecraft/mc-mods/yacl/files"));
@@ -176,7 +180,7 @@ public class ConfigManager {
                 MinecraftClient.getInstance().setScreen(null);
             }, Text.of("Yet Another Config Lib not installed!"), Text.of("YACL is required to edit the config in game, would you like to install YACL?"), ScreenTexts.YES, ScreenTexts.NO);
         } else {
-            String versionString = FabricLoader.getInstance().getModContainer("yet-another-config-lib").get().getMetadata().getVersion().getFriendlyString();
+            String versionString = Compat.getYACLVersion();
             int major = Integer.parseInt(versionString.split("\\.")[0]);
             int minor = Integer.parseInt(versionString.split("\\.")[1]);
             int patch = Integer.parseInt(versionString.split("\\.")[2]);
