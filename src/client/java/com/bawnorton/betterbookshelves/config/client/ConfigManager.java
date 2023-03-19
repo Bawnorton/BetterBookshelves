@@ -172,7 +172,7 @@ public class ConfigManager {
     }
 
     public static Screen getConfigScreen() {
-        if(Compat.isYACLLoaded()) {
+        if(!Compat.isYACLLoaded()) {
             return new ConfirmScreen((result) -> {
                 if (result) {
                     Util.getOperatingSystem().open(URI.create("https://www.curseforge.com/minecraft/mc-mods/yacl/files"));
