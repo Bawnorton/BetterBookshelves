@@ -39,6 +39,11 @@ This mod is currently in beta. If you find any bugs, please report them on the [
         * book_model: whole number between 0 and 5 (-1 to inherit from enchantment book)
         * hex_colour: hex colour code without the # (e.g. 00FF00 for green) ("inherit" to inherit from enchantment book)
 
+### Compatibility
+- Compatible with Wanilla (Not yet released)
+- Not compatible with any mods that modify the textures of a Chiseled Bookshelf block (ie, the block itself or any block that extends from it), this mod will override the textures.
+  - Mod developers: Contact me if you want to add compatibility with this mod.
+
 ### Installation
 #### Requires Fabric
 1. Download the latest version of the mod from the [releases page](https://modrinth.com/mod/betterbookshelves/versions)
