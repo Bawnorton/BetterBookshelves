@@ -24,6 +24,7 @@ public abstract class ChiseledBookshelfBlockMixin {
                     case "writable_book" -> 2;
                     case "written_book" -> 3;
                     case "enchanted_book" -> 4;
+                    case "knowledge_book" -> 5;
                     default -> 0;
                 });
             }

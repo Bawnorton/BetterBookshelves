@@ -1,7 +1,5 @@
 package com.bawnorton.betterbookshelves.model;
 
-import com.bawnorton.betterbookshelves.compat.Compat;
-import com.bawnorton.betterbookshelves.compat.client.wanilla.WanillaClientCompat;
 import com.bawnorton.betterbookshelves.config.client.Config;
 import com.bawnorton.betterbookshelves.config.client.ConfigManager;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -28,7 +26,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.Registries;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
@@ -145,8 +142,8 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         List<ItemStack> inventory = chiseledBookshelfBlockEntity.inventory;
 
         emitter.square(facing, 0, 0, 1, 1, 0);
-        emitter.spriteBake(0, getEmpty(Registries.BLOCK.getId(state.getBlock())), MutableQuadView.BAKE_LOCK_UV);
-        emitter.spriteColor(0, -1, -1, -1, -1);
+        emitter.spriteBake(getEmpty(), MutableQuadView.BAKE_LOCK_UV);
+        emitter.color(-1, -1, -1, -1);
         emitter.emit();
 
         for(int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) {
@@ -156,9 +153,9 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
 
             if(!Config.getInstance().perBookTexture) {
                 emitter.square(facing, 0, 0, 1, 1, 0);
-                emitter.spriteBake(0, SPRITES.get("default_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
-                emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
-                emitter.spriteColor(0, -1, -1, -1, -1);
+                emitter.spriteBake(SPRITES.get("default_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+                emitter.material(renderer.materialFinder().blendMode(CUTOUT_MIPPED).find());
+                emitter.color(-1, -1, -1, -1);
                 emitter.emit();
                 continue;
             }
@@ -179,26 +176,26 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             }
 
             emitter.square(facing, 0, 0, 1, 1, 0);
-            emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
-            emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
-            emitter.spriteColor(0, decimal, decimal, decimal, decimal);
+            emitter.spriteBake(SPRITES.get("book_" + model + "_" + (i + 1)), MutableQuadView.BAKE_LOCK_UV);
+            emitter.material(renderer.materialFinder().blendMode(CUTOUT_MIPPED).find());
+            emitter.color(decimal, decimal, decimal, decimal);
             emitter.emit();
 
             if(model != 2) { // 2 is the model without a band
                 emitter.square(facing, 0, 0, 1, 1, 0);
-                emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (i + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
-                emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
-                emitter.spriteColor(0, -1, -1, -1, -1);
+                emitter.spriteBake(SPRITES.get("book_" + model + "_" + (i + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
+                emitter.material(renderer.materialFinder().blendMode(CUTOUT_MIPPED).find());
+                emitter.color(-1, -1, -1, -1);
                 emitter.emit();
             }
         }
 
-        emitter.material(renderer.materialFinder().blendMode(0, BlendMode.SOLID).find());
+        emitter.material(renderer.materialFinder().blendMode(BlendMode.SOLID).find());
         for(Direction dir: Direction.values()) {
             if(dir != facing) {
                 emitter.square(dir, 0, 0, 1, 1, 0);
-                emitter.spriteBake(0, (dir != Direction.UP && dir != Direction.DOWN) ? getSide(Registries.BLOCK.getId(state.getBlock())) : getTop(Registries.BLOCK.getId(state.getBlock())), MutableQuadView.BAKE_LOCK_UV);
-                emitter.spriteColor(0, -1, -1, -1, -1);
+                emitter.spriteBake((dir != Direction.UP && dir != Direction.DOWN) ? getSide() : getTop(), MutableQuadView.BAKE_LOCK_UV);
+                emitter.color(-1, -1, -1, -1);
                 emitter.emit();
             }
         }
@@ -215,20 +212,20 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             switch (dir) {
                 case UP, DOWN -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, getTop(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
-                    emitter.spriteColor(0, -1, -1, -1, -1);
+                    emitter.spriteBake(getTop(), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.color(-1, -1, -1, -1);
                     emitter.emit();
                 }
                 case EAST, WEST, SOUTH -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, getSide(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
-                    emitter.spriteColor(0, -1, -1, -1, -1);
+                    emitter.spriteBake(getSide(), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.color(-1, -1, -1, -1);
                     emitter.emit();
                 }
                 case NORTH -> {
                     emitter.square(dir, 0, 0, 1, 1, 0);
-                    emitter.spriteBake(0, getEmpty(Registries.ITEM.getId(stack.getItem())), MutableQuadView.BAKE_LOCK_UV);
-                    emitter.spriteColor(0, -1, -1, -1, -1);
+                    emitter.spriteBake(getEmpty(), MutableQuadView.BAKE_LOCK_UV);
+                    emitter.color(-1, -1, -1, -1);
                     emitter.emit();
                 }
             }
@@ -247,6 +244,7 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                         case "writable_book" -> Config.BookType.WRITABLE_BOOK;
                         case "written_book" -> Config.BookType.WRITTEN_BOOK;
                         case "enchanted_book" -> Config.BookType.ENCHANTED_BOOK;
+                        case "knowledge_book" -> Config.BookType.KNOWLEDGE_BOOK;
                         default -> Config.BookType.BOOK;
                     };
                     String regex = "(?<=StoredEnchantments:\\[\\{id:\")(.*)(?=\")";
@@ -256,21 +254,21 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                         if(bookType != Config.BookType.ENCHANTED_BOOK) {
                             Config.BookTexture bookTexture = ConfigManager.getBookTexture(bookType);
                             int decimal = bookTexture.getDecimal() - 0xFFFFFF - 1;
-                            emitter.spriteBake(0, SPRITES.get("book_" + bookTexture.model + "_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
-                            emitter.spriteColor(0, decimal, decimal, decimal, decimal);
+                            emitter.spriteBake(SPRITES.get("book_" + bookTexture.model + "_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                            emitter.color(decimal, decimal, decimal, decimal);
                         } else {
                             if(!matcher.find()) continue;
                             String enchant = matcher.group(0);
                             Config.EnchantedTexture enchantedTexture = ConfigManager.getEnchantedTexture(enchant);
                             int decimal = enchantedTexture.getDecimal() - 0xFFFFFF - 1;
-                            emitter.spriteBake(0, SPRITES.get("book_" + enchantedTexture.getModel() + "_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
-                            emitter.spriteColor(0, decimal, decimal, decimal, decimal);
+                            emitter.spriteBake(SPRITES.get("book_" + enchantedTexture.getModel() + "_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                            emitter.color(decimal, decimal, decimal, decimal);
                         }
                     } else if (!type.equals("minecraft:air")) {
-                        emitter.spriteBake(0, SPRITES.get("default_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
-                        emitter.spriteColor(0, -1, -1, -1, -1);
+                        emitter.spriteBake(SPRITES.get("default_" + (slot + 1)), MutableQuadView.BAKE_LOCK_UV);
+                        emitter.color(-1, -1, -1, -1);
                     }
-                    emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
+                    emitter.material(renderer.materialFinder().blendMode(CUTOUT_MIPPED).find());
                     emitter.emit();
 
                     if (Config.getInstance().perBookTexture) {
@@ -283,9 +281,9 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
                             model = ConfigManager.getEnchantedTexture(enchant).getModel();
                         }
                         if(model != 2) { // 2 is the model without a band
-                            emitter.spriteBake(0, SPRITES.get("book_" + model + "_" + (slot + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
-                            emitter.spriteColor(0, -1, -1, -1, -1);
-                            emitter.material(renderer.materialFinder().blendMode(0, CUTOUT_MIPPED).find());
+                            emitter.spriteBake(SPRITES.get("book_" + model + "_" + (slot + 1) + "_band"), MutableQuadView.BAKE_LOCK_UV);
+                            emitter.color(-1, -1, -1, -1);
+                            emitter.material(renderer.materialFinder().blendMode(CUTOUT_MIPPED).find());
                             emitter.emit();
                         }
                     }
@@ -295,32 +293,16 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
         context.meshConsumer().accept(mesh);
     }
 
-    private Sprite getEmpty(Identifier id) {
-        if(!Compat.isWanillaLoaded()) return SPRITES.get("chiseled_bookshelf_empty");
-        return getWanillaSprite(id, 0);
+    private Sprite getEmpty() {
+        return SPRITES.get("chiseled_bookshelf_empty");
     }
 
-    private Sprite getSide(Identifier id) {
-        if(!Compat.isWanillaLoaded()) {
-            return SPRITES.get("chiseled_bookshelf_side");
-        }
-        return getWanillaSprite(id, 1);
+    private Sprite getSide() {
+        return SPRITES.get("chiseled_bookshelf_side");
     }
 
-    private Sprite getTop(Identifier id) {
-        if(!Compat.isWanillaLoaded()) return SPRITES.get("chiseled_bookshelf_top");
-        return getWanillaSprite(id, 2);
-    }
-
-    private Sprite getWanillaSprite(Identifier id, int index) {
-        List<Sprite> sprites = WanillaClientCompat.getBookshelfSprites(id);
-        if(sprites != null) return sprites.get(index);
-        return switch (index) {
-            case 0 -> SPRITES.get("chiseled_bookshelf_empty");
-            case 1 -> SPRITES.get("chiseled_bookshelf_side");
-            case 2 -> SPRITES.get("chiseled_bookshelf_top");
-            default -> throw new IllegalStateException("Unexpected value: " + index);
-        };
+    private Sprite getTop() {
+        return SPRITES.get("chiseled_bookshelf_top");
     }
 
     @Override
@@ -380,9 +362,6 @@ public class ChiseledBookshelfModel implements UnbakedModel, BakedModel, FabricB
             String path = spriteIdentifier.getTextureId().getPath();
             String name = path.substring(path.lastIndexOf('/') + 1);
             SPRITES.put(name, textureGetter.apply(spriteIdentifier));
-        }
-        if(Compat.isWanillaLoaded()) {
-            WanillaClientCompat.buildBookshelfSprites(textureGetter);
         }
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         if(renderer == null) return this;

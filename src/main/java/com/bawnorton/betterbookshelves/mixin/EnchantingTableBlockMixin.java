@@ -1,7 +1,5 @@
 package com.bawnorton.betterbookshelves.mixin;
 
-import com.bawnorton.betterbookshelves.compat.Compat;
-import com.bawnorton.betterbookshelves.compat.wanilla.WanillaCompat;
 import com.bawnorton.betterbookshelves.config.ServerConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -20,13 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EnchantingTableBlock.class)
 public abstract class EnchantingTableBlockMixin {
 
-    @Inject(method = "canAccessBookshelf", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "canAccessPowerProvider", at = @At("RETURN"), cancellable = true)
     private static void canAccessBookshelf(World world, BlockPos tablePos, BlockPos bookshelfOffset, CallbackInfoReturnable<Boolean> cir) {
         if (ServerConfig.getInstance().enchantingTableBookRequirement == -1) return;
         if(cir.getReturnValueZ()) return;
         BlockState blockState = world.getBlockState(tablePos.add(bookshelfOffset));
         boolean isChiseledBookshelf = blockState.isOf(Blocks.CHISELED_BOOKSHELF) && world.isAir(tablePos.add(bookshelfOffset.getX() / 2, bookshelfOffset.getY(), bookshelfOffset.getZ() / 2));
-        if(!isChiseledBookshelf && Compat.isWanillaLoaded()) isChiseledBookshelf = WanillaCompat.isChiseledBookself(blockState);
         if(isChiseledBookshelf) {
             Direction facing = blockState.get(Properties.HORIZONTAL_FACING);
             BlockPos chiseledBookshelfPos = tablePos.add(bookshelfOffset);

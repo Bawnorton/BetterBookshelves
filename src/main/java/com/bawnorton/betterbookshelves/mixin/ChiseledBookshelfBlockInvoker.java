@@ -11,15 +11,13 @@ import java.util.Optional;
 
 @Mixin(ChiseledBookshelfBlock.class)
 public interface ChiseledBookshelfBlockInvoker {
-    @SuppressWarnings("unused")
     @Invoker("getHitPos")
     static Optional<Vec2f> getHitPos(BlockHitResult hit, Direction facing) {
-        throw new IllegalStateException("Mixin invoker failed to apply");
+        throw new AssertionError();
     }
 
-    @SuppressWarnings("unused")
     @Invoker("getSlotForHitPos")
     static int getSlotForHitPos(Vec2f hitPos) {
-        throw new IllegalStateException("Mixin invoker failed to apply");
+        throw new AssertionError();
     }
 }
