@@ -5,8 +5,6 @@ Better Bookshelves
 [![Modrinth](https://img.shields.io/modrinth/dt/betterbookshelves?color=00AF5C&label=downloads&logo=modrinth)](https://modrinth.com/mod/betterbookshelves)
 [![CurseForge](https://cf.way2muchnoise.eu/full_693364_downloads.svg)](https://curseforge.com/minecraft/mc-mods/better-bookshelves)
 
-## BETA
-This mod is currently in beta. If you find any bugs, please report them on the [issue tracker](https://github.com/Benjamin-Norton/BetterBookshelves/issues)
 
 ### Features
 * Book Type Rendering:
