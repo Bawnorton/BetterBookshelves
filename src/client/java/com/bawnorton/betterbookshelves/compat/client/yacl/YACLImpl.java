@@ -17,7 +17,7 @@ public class YACLImpl {
                 .name(Text.literal("Text Size"))
                 .description(option -> OptionDescription.createBuilder()
                         .text(Text.literal("The type of search to use when searching for blocks"),
-                                Text.literal("Disabled if Text Preview is set to Under Crosshair"))
+                                Text.literal("Disabled if Text Preview is not \"ON\""))
                         .image(
                                 option >= 15 ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/large.png") :
                                 option >= 10 ? new Identifier(BetterBookshelves.MOD_ID, "config/screenshots/on.png") :
@@ -36,6 +36,7 @@ public class YACLImpl {
                         .tooltip(Text.literal("General settings"))
                         .group(OptionGroup.createBuilder()
                                 .name(Text.literal("Main"))
+                                .description(OptionDescription.of(Text.literal("Main settings")))
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.literal("Per Book Texture"))
                                         .description(option -> OptionDescription.createBuilder()

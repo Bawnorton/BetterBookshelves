@@ -88,7 +88,8 @@ public class ConfigManager {
                 Config.BookTexture.of(Config.BookType.BOOK),
                 Config.BookTexture.of(Config.BookType.WRITABLE_BOOK),
                 Config.BookTexture.of(Config.BookType.WRITTEN_BOOK),
-                Config.BookTexture.of(Config.BookType.ENCHANTED_BOOK)
+                Config.BookTexture.of(Config.BookType.ENCHANTED_BOOK),
+                Config.BookTexture.of(Config.BookType.KNOWLEDGE_BOOK)
         );
     }
 
@@ -119,6 +120,8 @@ public class ConfigManager {
             return getBookTexture(Config.BookType.WRITTEN_BOOK);
         } else if(item == Items.ENCHANTED_BOOK) {
             return getBookTexture(Config.BookType.ENCHANTED_BOOK);
+        } else if(item == Items.KNOWLEDGE_BOOK) {
+            return getBookTexture(Config.BookType.KNOWLEDGE_BOOK);
         } else {
             return getBookTexture(Config.BookType.BOOK);
         }
